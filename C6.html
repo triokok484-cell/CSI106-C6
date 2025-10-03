@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ôn tập Mạng Máy Tính - Chương 6</title>
+    <title>Ôn tập Mạng Máy Tính - Chương 6 (Nâng cao)</title>
     <style>
         :root {
-            --primary-color: #007bff;
+            --primary-color: #0056b3;
             --secondary-color: #6c757d;
-            --success-color: #28a745;
+            --success-color: #198754;
             --danger-color: #dc3545;
+            --warning-color: #ffc107;
             --light-color: #f8f9fa;
-            --dark-color: #343a40;
+            --dark-color: #212529;
             --bg-color: #ffffff;
             --text-color: #212529;
             --border-radius: 8px;
-            --box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --highlight-bg: #e9ecef;
+            --highlight-text: #0d6efd;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
+            line-height: 1.7;
             background-color: var(--light-color);
             color: var(--text-color);
             margin: 0;
@@ -40,7 +43,7 @@
 
         header {
             text-align: center;
-            border-bottom: 2px solid var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
@@ -48,6 +51,7 @@
         header h1 {
             color: var(--primary-color);
             margin: 0;
+            font-size: 2em;
         }
 
         .tabs {
@@ -72,6 +76,8 @@
         .tab-button.active, .tab-button:hover, .control-button:hover, .quiz-nav-button:hover, .quiz-start-button:hover {
             background-color: var(--primary-color);
             color: var(--bg-color);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .control-button.translate {
@@ -90,27 +96,68 @@
         /* Theory Styles */
         #theory-content h2 {
             color: var(--primary-color);
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
             margin-top: 30px;
         }
         #theory-content h3 {
             color: var(--dark-color);
             margin-top: 20px;
         }
-        #theory-content strong, #theory-content code {
+        #theory-content strong {
             color: var(--primary-color);
+            font-weight: 700;
+        }
+        #theory-content code {
+            background-color: var(--highlight-bg);
+            color: var(--highlight-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
             font-weight: bold;
         }
         #theory-content ul {
-            list-style-type: disc;
+            list-style-type: '✓';
             padding-left: 20px;
+        }
+        #theory-content li {
+            padding-left: 10px;
+            margin-bottom: 5px;
+        }
+
+        .core-takeaways {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #fff9e6;
+            border-left: 5px solid var(--warning-color);
+            border-radius: var(--border-radius);
+        }
+        .core-takeaways h3 {
+            margin-top: 0;
+            color: var(--dark-color);
         }
 
         /* Quiz Styles */
         #quiz-start-screen {
             text-align: center;
-            padding: 50px 0;
+            padding: 40px 20px;
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+        }
+        .question-count-selector {
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+        .question-count-selector label {
+            margin-right: 10px;
+        }
+        .question-count-selector input {
+            width: 80px;
+            padding: 8px;
+            font-size: 1em;
+            text-align: center;
+            border: 2px solid var(--secondary-color);
+            border-radius: var(--border-radius);
         }
 
         #quiz-container {
@@ -125,12 +172,13 @@
             border-radius: var(--border-radius);
             margin-bottom: 20px;
             height: 10px;
+            overflow: hidden;
         }
 
         .progress-bar-fill {
             height: 100%;
             width: 0%;
-            background-color: var(--primary-color);
+            background: linear-gradient(90deg, #1e90ff, var(--primary-color));
             border-radius: var(--border-radius);
             transition: width 0.4s ease-in-out;
         }
@@ -140,12 +188,15 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            font-weight: bold;
+            color: var(--secondary-color);
         }
 
         .question-text {
             font-size: 1.3em;
             font-weight: bold;
             margin-bottom: 20px;
+            color: var(--dark-color);
         }
 
         .options-container {
@@ -170,30 +221,32 @@
         .option-button:hover:not(:disabled) {
             border-color: var(--primary-color);
             background-color: #f0f8ff;
+            transform: scale(1.01);
         }
 
         .option-button:disabled {
             cursor: not-allowed;
+            opacity: 0.7;
         }
         
         .option-button.correct {
-            background-color: #d4edda;
+            background-color: #d1e7dd;
             border-color: var(--success-color);
-            color: #155724;
+            color: #0f5132;
             font-weight: bold;
         }
 
         .option-button.incorrect {
             background-color: #f8d7da;
             border-color: var(--danger-color);
-            color: #721c24;
+            color: #842029;
             font-weight: bold;
         }
         
         .option-button.correct-answer {
-             background-color: #d4edda;
+             background-color: #d1e7dd;
              border-color: var(--success-color);
-             color: #155724;
+             color: #0f5132;
              animation: pulse 1s;
         }
         
@@ -209,16 +262,18 @@
             border-radius: var(--border-radius);
             background-color: #fff3cd;
             border: 1px solid #ffeeba;
-            color: #856404;
+            color: #664d03;
         }
         .feedback-container strong {
             display: block;
             margin-bottom: 5px;
+            color: #664d03;
         }
 
         .quiz-navigation {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-top: 30px;
         }
 
@@ -227,8 +282,9 @@
             text-align: center;
             padding: 20px;
             margin-bottom: 20px;
-            background-color: #e2e3e5;
+            background-color: var(--highlight-bg);
             border-radius: var(--border-radius);
+            border: 2px solid var(--primary-color);
         }
         #results-summary h2 {
             margin: 0 0 10px 0;
@@ -244,6 +300,7 @@
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: var(--border-radius);
+            background: #fff;
         }
         .result-item-question {
             font-weight: bold;
@@ -254,12 +311,15 @@
         }
         .user-answer.correct {
             color: var(--success-color);
+            font-weight: bold;
         }
         .user-answer.incorrect {
             color: var(--danger-color);
+            font-weight: bold;
         }
         .correct-answer-text {
             color: var(--success-color);
+            font-weight: bold;
         }
 
         @media (max-width: 600px) {
@@ -289,7 +349,11 @@
 
         <div id="quiz-content" class="tab-content">
             <div id="quiz-start-screen">
-                <h2 data-vi="Sẵn sàng chinh phục 100 câu hỏi?" data-en="Ready to conquer 100 questions?">Sẵn sàng chinh phục 100 câu hỏi?</h2>
+                <h2 data-vi="Sẵn sàng chinh phục bài kiểm tra?" data-en="Ready to ace the test?">Sẵn sàng chinh phục bài kiểm tra?</h2>
+                <div class="question-count-selector">
+                    <label for="num-questions" data-vi="Chọn số câu hỏi:" data-en="Select number of questions:">Chọn số câu hỏi:</label>
+                    <input type="number" id="num-questions" value="10" min="1" max="100">
+                </div>
                 <p data-vi="Các câu hỏi sẽ được xáo trộn ngẫu nhiên. Hãy bắt đầu khi bạn sẵn sàng!" data-en="Questions will be randomized. Start when you're ready!">Các câu hỏi sẽ được xáo trộn ngẫu nhiên. Hãy bắt đầu khi bạn sẵn sàng!</p>
                 <button class="quiz-start-button" onclick="startQuiz()" data-vi="🚀 Bắt đầu làm bài" data-en="🚀 Start Quiz">🚀 Bắt đầu làm bài</button>
             </div>
@@ -405,6 +469,15 @@ const theoryData = {
                 </ul>
             </li>
         </ul>
+        <div class="core-takeaways">
+            <h3>CỐT LÕI CẦN NHỚ:</h3>
+            <ul>
+                <li><strong>Mô hình 5 tầng:</strong> Application → Transport → Network → Data-Link → Physical.</li>
+                <li><strong>Địa chỉ 3 loại:</strong> <code>Tên miền</code> (Application), <code>IP</code> (Network), <code>MAC</code> (Data-Link).</li>
+                <li><strong>Vận chuyển 2 kiểu:</strong> <code>TCP</code> (tin cậy, chậm) và <code>UDP</code> (không tin cậy, nhanh).</li>
+                <li><strong>Đường đi 2 loại:</strong> <code>Có dây</code> (Guided) và <code>Không dây</code> (Unguided).</li>
+            </ul>
+        </div>
     `,
     en: `
         <h2>1. Overview of Networks and the Internet</h2>
@@ -493,6 +566,15 @@ const theoryData = {
                 </ul>
             </li>
         </ul>
+        <div class="core-takeaways">
+            <h3>CORE TAKEAWAYS:</h3>
+            <ul>
+                <li><strong>5-Layer Model:</strong> Application → Transport → Network → Data-Link → Physical.</li>
+                <li><strong>3 Address Types:</strong> <code>Domain Name</code> (Application), <code>IP</code> (Network), <code>MAC</code> (Data-Link).</li>
+                <li><strong>2 Transport Styles:</strong> <code>TCP</code> (reliable, slower) and <code>UDP</code> (unreliable, faster).</li>
+                <li><strong>2 Path Types:</strong> <code>Guided</code> (Wired) and <code>Unguided</code> (Wireless).</li>
+            </ul>
+        </div>
     `
 };
 
@@ -2301,14 +2383,13 @@ const quizData = [
 
 // --- APP STATE ---
 let currentLanguage = 'vi';
-let shuffledQuestions = [];
+let activeQuizQuestions = [];
 let currentQuestionIndex = 0;
 let userAnswers = [];
 let quizActive = false;
 
 // --- DOM ELEMENTS ---
 const theoryContentEl = document.getElementById('theory-content');
-const quizContentEl = document.getElementById('quiz-content');
 const quizStartScreenEl = document.getElementById('quiz-start-screen');
 const quizContainerEl = document.getElementById('quiz-container');
 const resultsContainerEl = document.getElementById('results-container');
@@ -2316,39 +2397,31 @@ const questionTextEl = document.getElementById('question-text');
 const optionsContainerEl = document.getElementById('options-container');
 const feedbackContainerEl = document.getElementById('feedback-container');
 const nextBtnEl = document.getElementById('next-btn');
-const submitBtnEl = document.getElementById('submit-btn');
 const questionCounterEl = document.getElementById('question-counter');
 const progressBarFillEl = document.getElementById('progress-bar-fill');
-
+const numQuestionsInput = document.getElementById('num-questions');
 
 // --- FUNCTIONS ---
 
-// Utility to shuffle an array
 function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return array;
+    return shuffled;
 }
 
-// Render content based on current language
 function renderContent() {
-    // Translate all static elements with data attributes
     document.querySelectorAll('[data-vi]').forEach(el => {
         el.innerHTML = el.dataset[currentLanguage];
     });
-
-    // Render theory
     theoryContentEl.innerHTML = theoryData[currentLanguage];
-
-    // If quiz is active, re-render the question
     if (quizActive) {
-        if(shuffledQuestions.length > 0 && currentQuestionIndex < userAnswers.length) {
+        if(activeQuizQuestions.length > 0 && currentQuestionIndex < userAnswers.length) {
              displayQuestion();
         }
     }
-    // If results are visible, re-render them
     if (!resultsContainerEl.classList.contains('hidden')) {
         displayResults();
     }
@@ -2362,13 +2435,20 @@ function toggleLanguage() {
 function showTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-
     document.getElementById(`${tabName}-content`).classList.add('active');
     document.querySelector(`button[onclick="showTab('${tabName}')"]`).classList.add('active');
 }
 
 function startQuiz() {
-    shuffledQuestions = shuffleArray([...quizData]);
+    let numQuestions = parseInt(numQuestionsInput.value);
+    if (isNaN(numQuestions) || numQuestions < 1 || numQuestions > 100) {
+        alert(currentLanguage === 'vi' ? 'Vui lòng chọn số câu hỏi từ 1 đến 100.' : 'Please choose a number of questions between 1 and 100.');
+        return;
+    }
+
+    const allQuestionsShuffled = shuffleArray(quizData);
+    activeQuizQuestions = allQuestionsShuffled.slice(0, numQuestions);
+    
     currentQuestionIndex = 0;
     userAnswers = [];
     quizActive = true;
@@ -2384,43 +2464,40 @@ function displayQuestion() {
     feedbackContainerEl.classList.add('hidden');
     nextBtnEl.classList.add('hidden');
 
-    const question = shuffledQuestions[currentQuestionIndex];
+    const question = activeQuizQuestions[currentQuestionIndex];
     questionTextEl.innerText = question.question[currentLanguage];
     
     const questionCountText = {
-        vi: `Câu ${currentQuestionIndex + 1} / ${shuffledQuestions.length}`,
-        en: `Question ${currentQuestionIndex + 1} / ${shuffledQuestions.length}`
+        vi: `Câu ${currentQuestionIndex + 1} / ${activeQuizQuestions.length}`,
+        en: `Question ${currentQuestionIndex + 1} / ${activeQuizQuestions.length}`
     };
     questionCounterEl.innerText = questionCountText[currentLanguage];
 
-    progressBarFillEl.style.width = `${((currentQuestionIndex) / shuffledQuestions.length) * 100}%`;
+    progressBarFillEl.style.width = `${((currentQuestionIndex) / activeQuizQuestions.length) * 100}%`;
     
     optionsContainerEl.innerHTML = '';
     question.options.forEach((option, index) => {
         const button = document.createElement('button');
         button.classList.add('option-button');
-        button.innerText = `${String.fromCharCode(65 + index)}. ${option[currentLanguage]}`;
+        button.innerHTML = `<strong>${String.fromCharCode(65 + index)}</strong>. ${option[currentLanguage]}`;
         button.onclick = () => selectAnswer(index);
         optionsContainerEl.appendChild(button);
     });
 }
 
 function selectAnswer(selectedIndex) {
-    const question = shuffledQuestions[currentQuestionIndex];
+    const question = activeQuizQuestions[currentQuestionIndex];
     const isCorrect = (selectedIndex === question.correctAnswerIndex);
 
-    // Store user's answer
     userAnswers.push({
         question: question,
         userAnswerIndex: selectedIndex,
         isCorrect: isCorrect
     });
     
-    // Disable all option buttons
     const optionButtons = optionsContainerEl.querySelectorAll('.option-button');
     optionButtons.forEach(btn => btn.disabled = true);
     
-    // Provide visual feedback
     const selectedButton = optionButtons[selectedIndex];
     const correctButton = optionButtons[question.correctAnswerIndex];
 
@@ -2439,22 +2516,21 @@ function selectAnswer(selectedIndex) {
         feedbackContainerEl.classList.remove('hidden');
     }
     
-    // Show next button
-    if (currentQuestionIndex < shuffledQuestions.length - 1) {
+    if (currentQuestionIndex < activeQuizQuestions.length - 1) {
         nextBtnEl.classList.remove('hidden');
+        const nextText = { vi: 'Câu Tiếp Theo →', en: 'Next Question →' };
+        nextBtnEl.innerHTML = nextText[currentLanguage];
     } else {
-        // This is the last question, change Next to a "Finish" button or just let them submit.
          const lastQuestionText = { vi: '🏁 Hoàn Thành & Xem Kết Quả', en: '🏁 Finish & View Results' };
          nextBtnEl.innerHTML = lastQuestionText[currentLanguage];
          nextBtnEl.classList.remove('hidden');
     }
 }
 
-
 function nextQuestion() {
     currentQuestionIndex++;
-     if (currentQuestionIndex < shuffledQuestions.length) {
-        progressBarFillEl.style.width = `${((currentQuestionIndex) / shuffledQuestions.length) * 100}%`;
+     if (currentQuestionIndex < activeQuizQuestions.length) {
+        progressBarFillEl.style.width = `${((currentQuestionIndex) / activeQuizQuestions.length) * 100}%`;
         displayQuestion();
     } else {
         submitQuiz();
@@ -2528,9 +2604,7 @@ function restartQuiz() {
     progressBarFillEl.style.width = '0%';
 }
 
-// Initial load
 document.addEventListener('DOMContentLoaded', renderContent);
-
 </script>
 </body>
 </html>
