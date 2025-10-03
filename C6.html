@@ -3,361 +3,2534 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sổ tay Ôn tập CSI</title>
+    <title>Ôn tập Mạng Máy Tính - Chương 6</title>
     <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --bg-color: #ffffff;
+            --text-color: #212529;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.6;
+            background-color: var(--light-color);
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
-        }
-        .container {
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 25px 30px;
-        }
-        h1 {
-            color: #005691;
-            text-align: center;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 15px;
-            margin-top: 0;
-        }
-        .controls {
             display: flex;
             justify-content: center;
-            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: var(--bg-color);
+            padding: 20px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
             gap: 10px;
-            margin-bottom: 25px;
-            font-size: 1.1em;
         }
-        #chapter-select {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 1em;
-            background-color: #f8f9fa;
+
+        .tab-button, .control-button, .quiz-nav-button, .quiz-start-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 2px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+            font-weight: bold;
         }
-        #content-display {
-            border-top: 1px solid #eee;
-            padding-top: 20px;
+
+        .tab-button.active, .tab-button:hover, .control-button:hover, .quiz-nav-button:hover, .quiz-start-button:hover {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
         }
-        #content-display h3 {
-            color: #005691;
-            font-size: 1.8em;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #007bff;
+        
+        .control-button.translate {
+             border-color: var(--success-color);
+             color: var(--success-color);
+        }
+        .control-button.translate:hover {
+            background-color: var(--success-color);
+            color: var(--bg-color);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .hidden { display: none !important; }
+
+        /* Theory Styles */
+        #theory-content h2 {
+            color: var(--primary-color);
+            border-bottom: 1px solid #eee;
             padding-bottom: 5px;
-            display: inline-block;
+            margin-top: 30px;
         }
-        #content-display h4 {
-            color: #17a2b8;
-            font-size: 1.3em;
+        #theory-content h3 {
+            color: var(--dark-color);
             margin-top: 20px;
-            margin-bottom: 10px;
         }
-        #content-display ul {
+        #theory-content strong, #theory-content code {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        #theory-content ul {
+            list-style-type: disc;
             padding-left: 20px;
         }
-        #content-display li {
-            margin-bottom: 8px;
-        }
-        #content-display strong {
-            color: #dc3545; /* Highlight color */
-            font-weight: 600;
-        }
-        #content-display code {
-            background-color: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.95em;
-        }
-        .welcome-message {
+
+        /* Quiz Styles */
+        #quiz-start-screen {
             text-align: center;
-            color: #6c757d;
-            font-size: 1.2em;
-            padding: 40px 20px;
+            padding: 50px 0;
         }
-        .example {
-            background-color: #f8f9fa;
-            border-left: 4px solid #17a2b8;
+
+        #quiz-container {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            height: 10px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-color);
+            border-radius: var(--border-radius);
+            transition: width 0.4s ease-in-out;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .option-button {
+            width: 100%;
             padding: 15px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
+            font-size: 1em;
+            text-align: left;
+            border: 2px solid var(--secondary-color);
+            background-color: #fff;
+            color: var(--dark-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-button:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            background-color: #f0f8ff;
+        }
+
+        .option-button:disabled {
+            cursor: not-allowed;
+        }
+        
+        .option-button.correct {
+            background-color: #d4edda;
+            border-color: var(--success-color);
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .option-button.incorrect {
+            background-color: #f8d7da;
+            border-color: var(--danger-color);
+            color: #721c24;
+            font-weight: bold;
+        }
+        
+        .option-button.correct-answer {
+             background-color: #d4edda;
+             border-color: var(--success-color);
+             color: #155724;
+             animation: pulse 1s;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .feedback-container {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        .feedback-container strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        /* Results Styles */
+        #results-summary {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #e2e3e5;
+            border-radius: var(--border-radius);
+        }
+        #results-summary h2 {
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+        }
+        #results-summary p {
+            font-size: 1.2em;
+            margin: 0;
+        }
+
+        .result-item {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+        }
+        .result-item-question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .result-item-answer {
+            padding-left: 20px;
+        }
+        .user-answer.correct {
+            color: var(--success-color);
+        }
+        .user-answer.incorrect {
+            color: var(--danger-color);
+        }
+        .correct-answer-text {
+            color: var(--success-color);
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            .tabs { flex-wrap: wrap; }
+            .tab-button, .control-button { font-size: 14px; padding: 8px 12px; }
+            .question-text { font-size: 1.1em; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Sổ tay Ôn tập Lý thuyết CSI</h1>
+        <header>
+            <h1 data-vi="Ôn Tập Mạng Máy Tính - Chương 6" data-en="Computer Networks Review - Chapter 6">Ôn Tập Mạng Máy Tính - Chương 6</h1>
+        </header>
 
-        <div class="controls">
-            <label for="chapter-select">Chọn chương để xem:</label>
-            <select id="chapter-select">
-                <option value="0">--- Chọn một chương ---</option>
-                <option value="1">Chương 1: Tổng quan</option>
-                <option value="2">Chương 2: Các hệ đếm</option>
-                <option value="3">Chương 3: Lưu trữ dữ liệu</option>
-                <option value="4">Chương 4: Các phép toán</option>
-                <option value="5">Chương 5: Tổ chức máy tính</option>
-                <option value="6">Chương 6: Mạng máy tính</option>
-            </select>
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('theory')" data-vi="📖 Lý Thuyết" data-en="📖 Theory">📖 Lý Thuyết</button>
+            <button class="tab-button" onclick="showTab('quiz')" data-vi="✍️ Trắc Nghiệm" data-en="✍️ Quiz">✍️ Trắc Nghiệm</button>
+            <button class="control-button translate" onclick="toggleLanguage()" data-vi="🌐 English" data-en="🌐 Tiếng Việt">🌐 English</button>
         </div>
 
-        <div id="content-display">
-            <div class="welcome-message">
-                <p>Hãy chọn một chương từ menu bên trên để bắt đầu ôn tập.</p>
-                <p>Chúc em thi tốt!</p>
+        <div id="theory-content" class="tab-content active">
             </div>
+
+        <div id="quiz-content" class="tab-content">
+            <div id="quiz-start-screen">
+                <h2 data-vi="Sẵn sàng chinh phục 100 câu hỏi?" data-en="Ready to conquer 100 questions?">Sẵn sàng chinh phục 100 câu hỏi?</h2>
+                <p data-vi="Các câu hỏi sẽ được xáo trộn ngẫu nhiên. Hãy bắt đầu khi bạn sẵn sàng!" data-en="Questions will be randomized. Start when you're ready!">Các câu hỏi sẽ được xáo trộn ngẫu nhiên. Hãy bắt đầu khi bạn sẵn sàng!</p>
+                <button class="quiz-start-button" onclick="startQuiz()" data-vi="🚀 Bắt đầu làm bài" data-en="🚀 Start Quiz">🚀 Bắt đầu làm bài</button>
+            </div>
+
+            <div id="quiz-container" class="hidden">
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                </div>
+                <div class="question-header">
+                    <span id="question-counter"></span>
+                </div>
+                <div class="question-text" id="question-text"></div>
+                <div class="options-container" id="options-container"></div>
+                <div class="feedback-container hidden" id="feedback-container"></div>
+                <div class="quiz-navigation">
+                    <button id="submit-btn" class="quiz-nav-button" onclick="submitQuiz()" data-vi="Nộp Bài" data-en="Submit">Nộp Bài</button>
+                    <button id="next-btn" class="quiz-nav-button hidden" onclick="nextQuestion()" data-vi="Câu Tiếp Theo →" data-en="Next Question →">Câu Tiếp Theo →</button>
+                </div>
+            </div>
+             <div id="results-container" class="hidden">
+                </div>
         </div>
     </div>
 
-    <script>
-        const theoryData = {
-            "0": `
-                <div class="welcome-message">
-                    <p>Hãy chọn một chương từ menu bên trên để bắt đầu ôn tập.</p>
-                    <p>Nội dung lý thuyết chi tiết sẽ được hiển thị ở đây.</p>
-                </div>
-            `,
-            "1": `
-                <h3>Chương 1: Introduction to Computer Science</h3>
-                <h4>Khái niệm Cốt lõi</h4>
-                <ul>
-                    <li><strong>Mô hình Turing:</strong> Một định nghĩa toán học về máy tính. Nó giới thiệu khái niệm <strong>"máy tính đa năng" (general-purpose machine)</strong>, có khả năng thực hiện bất kỳ phép tính nào nếu được cung cấp một chương trình phù hợp. Cấu trúc cơ bản: <code>Input Data + Program → Computer → Output Data</code>.</li>
-                    <li><strong>Mô hình Von Neumann:</strong> Là kiến trúc máy tính được sử dụng phổ biến nhất hiện nay.
-                        <ul>
-                            <li>Đặc điểm quan trọng nhất: <strong>Stored Program Concept (Khái niệm chương trình được lưu trữ)</strong>. Tức là cả chương trình (tập hợp các lệnh) và dữ liệu đều được lưu trữ trong cùng một bộ nhớ (RAM).</li>
-                            <li><strong>Bốn hệ thống con (Subsystems):</strong>
-                                <ol>
-                                    <li><strong>Memory (Bộ nhớ):</strong> Lưu trữ chương trình và dữ liệu.</li>
-                                    <li><strong>Arithmetic Logic Unit (ALU):</strong> Thực hiện các phép toán số học và logic.</li>
-                                    <li><strong>Control Unit (Khối điều khiển):</strong> Điều khiển hoạt động của các bộ phận khác.</li>
-                                    <li><strong>Input/Output (Nhập/Xuất):</strong> Giao tiếp với thế giới bên ngoài.</li>
-                                </ol>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-                <h4>Chi tiết Quan trọng</h4>
-                <ul>
-                    <li><strong>Ba thành phần cơ bản của một hệ thống máy tính:</strong>
-                        <ol>
-                            <li><strong>Hardware (Phần cứng):</strong> Các thiết bị vật lý.</li>
-                            <li><strong>Software (Phần mềm):</strong> Các chương trình, bao gồm hệ điều hành và ứng dụng.</li>
-                            <li><strong>Data (Dữ liệu):</strong> Thông tin mà chương trình xử lý.</li>
-                        </ol>
-                    </li>
-                    <li>Lịch sử máy tính được chia thành các thế hệ, đánh dấu bằng các công nghệ chính: Đèn chân không (Gen 1), Transistor (Gen 2), Mạch tích hợp - IC (Gen 3), Vi xử lý (Gen 4), Trí tuệ nhân tạo & Song song (Gen 5).</li>
-                </ul>
-            `,
-            "2": `
-                <h3>Chương 2: Number Systems (Hệ đếm)</h3>
-                <h4>Khái niệm Cốt lõi</h4>
-                <ul>
-                    <li>Máy tính chỉ làm việc với <strong>hệ nhị phân (Binary - base 2)</strong> vì các linh kiện điện tử có hai trạng thái (on/off).</li>
-                    <li>Con người dùng <strong>hệ thập phân (Decimal - base 10)</strong>.</li>
-                    <li>Lập trình viên dùng <strong>hệ thập lục phân (Hexadecimal - base 16)</strong> và <strong>hệ bát phân (Octal - base 8)</strong> để biểu diễn chuỗi bit một cách ngắn gọn.</li>
-                </ul>
-                <h4>Chi tiết Quan trọng & Ví dụ</h4>
-                <ul>
-                    <li><strong>Chuyển từ cơ số bất kỳ sang hệ 10:</strong> Nhân từng chữ số với cơ số mũ vị trí tương ứng.</li>
-                    <div class="example"><strong>Ví dụ (Hexa → Dec):</strong> <code>(1A5)₁₆ = 1 * 16² + A * 16¹ + 5 * 16⁰ = 1 * 256 + 10 * 16 + 5 * 1 = 421</code>.</div>
-                    <li><strong>Chuyển từ hệ 10 sang cơ số bất kỳ (phần nguyên):</strong> Chia liên tiếp cho cơ số và lấy phần dư, đọc ngược lại.</li>
-                    <div class="example"><strong>Ví dụ (Dec → Binary):</strong> Chuyển <code>25</code> sang binary.<br>
-                        <code>25 / 2 = 12</code> dư <code>1</code><br>
-                        <code>12 / 2 = 6</code> dư <code>0</code><br>
-                        <code>6 / 2 = 3</code> dư <code>0</code><br>
-                        <code>3 / 2 = 1</code> dư <code>1</code><br>
-                        <code>1 / 2 = 0</code> dư <code>1</code><br>
-                        Kết quả: <code>(11001)₂</code>.
-                    </div>
-                    <li><strong>Chuyển đổi giữa Binary ↔ Octal ↔ Hexadecimal:</strong> Dựa trên mối quan hệ gom nhóm bit.
-                        <ul>
-                            <li><strong>1 Octal digit = 3 bits:</strong> <code>(725)₈ = (111 010 101)₂</code></li>
-                            <li><strong>1 Hexadecimal digit = 4 bits:</strong> <code>(A2F)₁₆ = (1010 0010 1111)₂</code></li>
-                        </ul>
-                    </li>
-                    <div class="example"><strong>Ví dụ (Binary → Hexa):</strong> Chuyển <code>(1101011)₂</code>.<br>
-                        1. Gom nhóm 4 bit từ phải qua: <code>0110 1011</code> (thêm 0 ở đầu nếu cần).<br>
-                        2. <code>0110 = 6</code>, <code>1011 = 11 = B</code>.<br>
-                        3. Kết quả: <code>(6B)₁₆</code>.
-                    </div>
-                </ul>
-            `,
-            "3": `
-                <h3>Chương 3: Data Storage (Lưu trữ dữ liệu)</h3>
-                <h4>Khái niệm Cốt lõi</h4>
-                <ul>
-                    <li>Tất cả dữ liệu (số, văn bản, ảnh,...) đều được mã hóa thành <strong>chuỗi bit (bit patterns)</strong>.</li>
-                </ul>
-                <h4>Chi tiết Quan trọng</h4>
-                <ul>
-                    <li><strong>Lưu trữ Số nguyên (Integers):</strong>
-                        <ul>
-                            <li><em>Unsigned:</em> Chỉ số không âm. Toàn bộ bit dùng để biểu diễn giá trị.</li>
-                            <li><em>Sign-and-Magnitude:</em> Bit trái nhất là bit dấu (0: dương, 1: âm). Gặp vấn đề với hai biểu diễn của số 0 (+0 và -0).</li>
-                            <li><strong>Two's Complement (Bù 2):</strong> <strong>Phương pháp chuẩn để lưu số nguyên có dấu.</strong>
-                                <ul>
-                                    <li><strong>Cách tìm bù 2 của một số:</strong> Đảo tất cả các bit (tìm bù 1) rồi cộng 1.</li>
-                                    <li>Ưu điểm: Chỉ có một biểu diễn cho số 0, phép trừ trở thành phép cộng.</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><strong>Lưu trữ Số thực (Reals) - Floating-Point:</strong>
-                        <ul>
-                            <li>Dựa trên cách biểu diễn khoa học: <code>(-1)^S * M * 2^E</code>.</li>
-                            <li><strong>Tiêu chuẩn IEEE 754</strong> chia chuỗi bit thành 3 phần:
-                                <ol>
-                                    <li><strong>Sign (S):</strong> Dấu của số (1 bit).</li>
-                                    <li><strong>Exponent (E):</strong> Số mũ, được lưu ở dạng "Excess" (thiên vị) để biểu diễn cả số mũ âm và dương.</li>
-                                    <li><strong>Mantissa (M):</strong> Phần định trị (phần thập phân của số khoa học).</li>
-                                </ol>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><strong>Lưu trữ Văn bản (Text):</strong>
-                        <ul>
-                            <li><strong>ASCII:</strong> 7-bit hoặc 8-bit, đủ cho tiếng Anh và các ký tự điều khiển.</li>
-                            <li><strong>Unicode (UTF-8, UTF-16):</strong> Chuẩn quốc tế, có thể biểu diễn mọi ngôn ngữ. UTF-8 là phổ biến nhất trên web.</li>
-                        </ul>
-                    </li>
-                </ul>
-            `,
-            "4": `
-                <h3>Chương 4: Operations on Data (Các phép toán)</h3>
-                <h4>Khái niệm Cốt lõi</h4>
-                <ul>
-                    <li>Các phép toán trong máy tính được thực hiện ở mức bit.</li>
-                </ul>
-                <h4>Chi tiết Quan trọng & Ví dụ</h4>
-                <ul>
-                    <li><strong>1. Phép toán Logic (Logical Operations):</strong>
-                        <ul>
-                            <li>Bao gồm: <code>NOT</code> (đảo bit), <code>AND</code> (chỉ 1 nếu cả hai là 1), <code>OR</code> (chỉ 0 nếu cả hai là 0), <code>XOR</code> (là 1 nếu hai bit khác nhau).</li>
-                            <li><strong>Ứng dụng với mặt nạ (Masking):</strong>
-                                <ul>
-                                    <li><strong>Unset (tắt bit):</strong> <code>data AND 11110111</code> (tắt bit thứ 3 từ phải sang).</li>
-                                    <li><strong>Set (bật bit):</strong> <code>data OR 00001000</code> (bật bit thứ 4 từ phải sang).</li>
-                                    <li><strong>Flip (lật bit):</strong> <code>data XOR 00000001</code> (lật bit cuối cùng).</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><strong>2. Phép toán Dịch chuyển (Shift Operations):</strong>
-                        <ul>
-                            <li><em>Logical Shift (Dịch logic):</em> Dịch bit sang trái/phải, chèn 0 vào chỗ trống.</li>
-                            <li><em>Arithmetic Shift (Dịch số học):</em> Khi dịch phải, <strong>giữ nguyên bit dấu</strong> (bit trái nhất) để bảo toàn giá trị của số âm.</li>
-                            <li><strong>Dịch trái n bit ≈ Nhân 2ⁿ. Dịch phải n bit ≈ Chia 2ⁿ (phần nguyên).</strong></li>
-                        </ul>
-                    </li>
-                    <li><strong>3. Phép toán Số học (Arithmetic Operations):</strong>
-                        <ul>
-                            <li><strong>Cộng/Trừ số Bù 2:</strong> Phép cộng thực hiện như cộng nhị phân bình thường. <strong>Bit nhớ ra khỏi bit trái nhất sẽ bị loại bỏ.</strong></li>
-                            <li><strong>Phép trừ A - B được thực hiện bằng A + (Bù 2 của B).</strong></li>
-                            <li><strong>Overflow (Tràn số):</strong> Xảy ra khi kết quả của phép toán vượt quá phạm vi biểu diễn. Dấu hiệu: cộng 2 số dương ra số âm, hoặc cộng 2 số âm ra số dương.</li>
-                        </ul>
-                    </li>
-                </ul>
-                <div class="example"><strong>Ví dụ (Trừ bằng Bù 2, 8-bit):</strong> Tính <code>12 - 5</code><br>
-                    1. <code>12 = 00001100</code><br>
-                    2. <code>5 = 00000101</code><br>
-                    3. Bù 1 của 5 là <code>11111010</code>. Bù 2 của 5 là <code>-5 = 11111011</code>.<br>
-                    4. Thực hiện phép cộng: <code>00001100 (12) + 11111011 (-5) = (1)00000111</code>.<br>
-                    5. Bỏ bit nhớ 1 ở đầu, kết quả là <code>00000111 = 7</code>.
-                </div>
-            `,
-            "5": `
-                <h3>Chương 5: Computer Organization (Tổ chức máy tính)</h3>
-                <h4>Khái niệm Cốt lõi</h4>
-                <ul>
-                    <li>Nghiên cứu cách các thành phần phần cứng được kết nối và phối hợp với nhau để tạo thành một hệ thống máy tính hoạt động.</li>
-                </ul>
-                <h4>Chi tiết Quan trọng</h4>
-                <ul>
-                    <li><strong>Ba hệ thống con (Subsystems):</strong> <strong>CPU</strong>, <strong>Main Memory (RAM)</strong>, và <strong>I/O Subsystem</strong>. Chúng được kết nối qua hệ thống <strong>Bus</strong> (Data Bus, Address Bus, Control Bus).</li>
-                    <li><strong>CPU (Central Processing Unit):</strong>
-                        <ul>
-                            <li><strong>ALU (Arithmetic Logic Unit):</strong> Trung tâm tính toán.</li>
-                            <li><strong>Control Unit (CU):</strong> "Nhạc trưởng" điều khiển luồng dữ liệu và lệnh.</li>
-                            <li><strong>Registers (Thanh ghi):</strong> Các ô nhớ nhỏ, siêu nhanh bên trong CPU.
-                                <ul>
-                                    <li><em>Program Counter (PC):</em> Chứa địa chỉ của lệnh <strong>tiếp theo</strong> sẽ được thực thi.</li>
-                                    <li><em>Instruction Register (IR):</em> Chứa lệnh <strong>hiện tại</strong> đang được thực thi.</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><strong>Chu kỳ máy (Machine Cycle):</strong> Quy trình <strong>Fetch → Decode → Execute</strong> là nền tảng hoạt động của CPU.</li>
-                    <li><strong>Phân cấp bộ nhớ (Memory Hierarchy):</strong>
-                        <ul>
-                            <li>Mục đích: Cân bằng giữa <strong>tốc độ, dung lượng và chi phí</strong>.</li>
-                            <li>Thứ tự từ nhanh đến chậm: <strong>Registers → Cache → RAM → Storage (SSD/HDD).</strong></li>
-                        </ul>
-                    </li>
-                    <li><strong>Kiến trúc tập lệnh:</strong>
-                        <ul>
-                            <li><strong>CISC (Complex Instruction Set Computer):</strong> Tập lệnh phức tạp, một lệnh có thể làm nhiều việc. (VD: Intel x86).</li>
-                            <li><strong>RISC (Reduced Instruction Set Computer):</strong> Tập lệnh rút gọn, đơn giản, tối ưu hóa cho tốc độ. (VD: ARM).</li>
-                        </ul>
-                    </li>
-                </ul>
-            `,
-            "6": `
-                <h3>Chương 6: Computer Networks & Internet</h3>
-                <h4>Khái niệm Cốt lõi</h4>
-                <ul>
-                    <li><strong>Protocol (Giao thức):</strong> Tập hợp các quy tắc mà các thiết bị phải tuân theo để giao tiếp với nhau.</li>
-                    <li><strong>Protocol Layering (Phân tầng giao thức):</strong> Chia nhỏ nhiệm vụ giao tiếp phức tạp thành các tầng (layers) đơn giản hơn, mỗi tầng có một chức năng cụ thể.</li>
-                </ul>
-                <h4>Mô hình TCP/IP (5 lớp)</h4>
-                <ul>
-                    <li><strong>Layer 5 - Application (Ứng dụng):</strong> Cung cấp giao diện và dịch vụ cho người dùng.
-                        <ul><li>Giao thức: <strong>HTTP</strong> (web), <strong>FTP</strong> (truyền file), <strong>SMTP</strong> (email), <strong>DNS</strong> (phân giải tên miền).</li></ul>
-                    </li>
-                    <li><strong>Layer 4 - Transport (Giao vận):</strong> Giao tiếp <strong>end-to-end (process-to-process)</strong>.
-                        <ul>
-                            <li><strong>TCP (Transmission Control Protocol):</strong> <strong>Hướng kết nối, tin cậy</strong>, đảm bảo dữ liệu đến đúng thứ tự và không mất mát.</li>
-                            <li><strong>UDP (User Datagram Protocol):</strong> <strong>Không kết nối, không tin cậy</strong>, ưu tiên tốc độ (dùng cho game, stream).</li>
-                            <li>Sử dụng <strong>Port Numbers</strong> để xác định ứng dụng.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Layer 3 - Network (Mạng):</strong> Chịu trách nhiệm định tuyến (routing) các gói tin qua các mạng khác nhau để đi từ nguồn đến đích (host-to-host).
-                        <ul>
-                            <li>Giao thức chính: <strong>IP (Internet Protocol)</strong>.</li>
-                            <li>Sử dụng <strong>IP Address</strong> để định danh thiết bị trên mạng toàn cầu.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Layer 2 - Data Link (Liên kết dữ liệu):</strong> Truyền dữ liệu trong cùng một mạng cục bộ (LAN), ví dụ từ máy tính đến router (node-to-node).
-                        <ul>
-                            <li>Giao thức: Ethernet.</li>
-                            <li>Sử dụng <strong>MAC Address</strong> (địa chỉ vật lý của card mạng).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Layer 1 - Physical (Vật lý):</strong> Truyền luồng bit thô qua môi trường vật lý (cáp, sóng điện từ).</li>
-                </ul>
-            `
-        };
+<script>
+// --- DATA SECTION ---
 
-        const chapterSelect = document.getElementById('chapter-select');
-        const contentDisplay = document.getElementById('content-display');
+const theoryData = {
+    vi: `
+        <h2>1. Tổng quan về Mạng và Internet</h2>
+        <p>Chương này giới thiệu tổng quan về mạng máy tính, cấu trúc Internet, và đi sâu vào từng lớp của bộ giao thức <strong>TCP/IP</strong>, là nền tảng cho hoạt động của Internet hiện đại.</p>
+        <ul>
+            <li><strong>Mạng (Network):</strong> Là sự kết nối của một tập hợp các thiết bị có khả năng giao tiếp với nhau.</li>
+            <li><strong>Mạng LAN (Local Area Network):</strong> Mạng cục bộ, thường thuộc sở hữu tư nhân, kết nối các máy chủ trong một khu vực giới hạn như văn phòng hoặc tòa nhà.</li>
+            <li><strong>Mạng WAN (Wide Area Network):</strong> Mạng diện rộng, có phạm vi địa lý lớn hơn, kết nối các thiết bị như switch, router hoặc modem.</li>
+            <li><strong>Internetwork (internet):</strong> Được tạo ra khi hai hay nhiều mạng được kết nối với nhau.</li>
+            <li><strong>Internet:</strong> Là internetwork nổi bật nhất, bao gồm hàng ngàn mạng kết nối với nhau trên toàn cầu. Cấu trúc của Internet gồm các <strong>mạng xương sống (backbones)</strong>, các <strong>nhà cung cấp dịch vụ (ISP)</strong> và mạng của khách hàng.</li>
+        </ul>
+        <h3>Bộ giao thức TCP/IP</h3>
+        <p>Là một bộ giao thức phân cấp gồm 5 lớp được sử dụng trong Internet ngày nay:</p>
+        <ol>
+            <li>Lớp Ứng dụng (Application)</li>
+            <li>Lớp Giao vận (Transport)</li>
+            <li>Lớp Mạng (Network)</li>
+            <li>Lớp Liên kết dữ liệu (Data-link)</li>
+            <li>Lớp Vật lý (Physical)</li>
+        </ol>
 
-        function updateContent() {
-            const selectedChapter = chapterSelect.value;
-            contentDisplay.innerHTML = theoryData[selectedChapter];
+        <h2>2. Lớp Ứng dụng (Application Layer)</h2>
+        <p>Lớp này cung cấp các dịch vụ trực tiếp cho người dùng.</p>
+        <h3>Mô hình hoạt động:</h3>
+        <ul>
+            <li><strong>Client-Server:</strong> Một máy chủ (server) chạy liên tục để cung cấp dịch vụ cho nhiều máy khách (client) khi có yêu cầu. Các ứng dụng phổ biến bao gồm Web (<code>HTTP</code>), truyền tệp (<code>FTP</code>), email.</li>
+            <li><strong>Peer-to-Peer (P2P):</strong> Các máy tính chia sẻ trách nhiệm ngang hàng, vừa có thể cung cấp vừa có thể nhận dịch vụ. Thường được sử dụng trong chia sẻ tệp hoặc điện thoại Internet.</li>
+        </ul>
+        <h3>Các giao thức tiêu biểu:</h3>
+        <ul>
+            <li><strong>WWW và HTTP:</strong> Giao thức truyền tải siêu văn bản, dùng để truy cập các trang web.</li>
+            <li><strong>FTP:</strong> Giao thức truyền tệp, dùng để sao chép tệp từ máy này sang máy khác.</li>
+            <li><strong>Email:</strong> Cho phép người dùng trao đổi tin nhắn thông qua các tác nhân như <code>User Agent (UA)</code>, <code>Mail Transfer Agent (MTA)</code>, và <code>Message Access Agent (MAA)</code>.</li>
+            <li><strong>TELNET và SSH:</strong> Cung cấp khả năng đăng nhập từ xa vào một máy tính khác. <code>SSH</code> là phiên bản bảo mật hơn.</li>
+            <li><strong>DNS:</strong> Hệ thống tên miền, dịch địa chỉ tên miền (ví dụ: www.google.com) sang <strong>địa chỉ IP</strong> mà máy tính có thể hiểu được.</li>
+        </ul>
+
+        <h2>3. Lớp Giao vận (Transport Layer)</h2>
+        <p>Lớp này chịu trách nhiệm cung cấp giao tiếp từ <strong>tiến trình đến tiến trình (process-to-process)</strong>.</p>
+        <ul>
+            <li><strong>Địa chỉ hóa:</strong> Sử dụng các số nguyên gọi là <strong>số hiệu cổng (port number)</strong> để xác định các chương trình lớp ứng dụng ở máy nguồn và đích.</li>
+        </ul>
+        <h3>Các giao thức chính:</h3>
+        <ul>
+            <li><strong>UDP (User Datagram Protocol):</strong> Là giao thức <strong>không kết nối</strong> và <strong>không đáng tin cậy</strong>. Nó đơn giản, nhanh và có overhead tối thiểu.</li>
+            <li><strong>TCP (Transmission Control Protocol):</strong> Là giao thức <strong>hướng kết nối</strong> và <strong>đáng tin cậy</strong>. Nó đảm bảo các gói tin (<code>segment</code>) được truyền đến đích một cách chính xác và đúng thứ tự.</li>
+        </ul>
+
+        <h2>4. Lớp Mạng (Network Layer)</h2>
+        <p>Lớp này chịu trách nhiệm cho việc phân phối các gói tin từ <strong>máy chủ nguồn đến máy chủ đích (host-to-host)</strong>.</p>
+        <h3>Chức năng chính:</h3>
+        <ul>
+            <li><strong>Đóng gói (Packetizing):</strong> Đóng gói dữ liệu từ lớp trên vào các gói tin (<code>datagram</code>).</li>
+            <li><strong>Định tuyến (Routing):</strong> Tìm đường đi tốt nhất cho các gói tin từ nguồn đến đích thông qua các router.</li>
+        </ul>
+        <h3>Các giao thức chính:</h3>
+        <ul>
+            <li><strong>IPv4:</strong> Phiên bản Giao thức Internet hiện đang được sử dụng rộng rãi, sử dụng <strong>địa chỉ 32-bit</strong>.</li>
+            <li><strong>IPv6:</strong> Phiên bản mới hơn với không gian <strong>địa chỉ 128-bit</strong>, được thiết kế để giải quyết vấn đề cạn kiệt địa chỉ IPv4.</li>
+        </ul>
+
+        <h2>5. Lớp Liên kết dữ liệu (Data-Link Layer)</h2>
+        <p>Lớp này xử lý việc truyền dữ liệu giữa các <strong>nút kề nhau</strong> trong một mạng (<strong>node-to-node</strong>).</p>
+        <ul>
+            <li><strong>Mạng LAN:</strong>
+                <ul>
+                    <li><strong>Có dây:</strong> <code>Ethernet</code> là công nghệ phổ biến nhất, với các thế hệ tốc độ 10 Mbps, 100 Mbps, 1 Gbps, và 10 Gbps.</li>
+                    <li><strong>Không dây:</strong> Bao gồm <code>WiFi</code> (Wireless Ethernet) và <code>Bluetooth</code> (dành cho kết nối khoảng cách ngắn).</li>
+                </ul>
+            </li>
+            <li><strong>Mạng WAN:</strong>
+                <ul>
+                    <li><strong>Có dây:</strong> Gồm các dịch vụ như <code>Dial-up</code> (quay số), <code>DSL</code> (đường dây thuê bao số), và <code>mạng cáp (Cable Network)</code>.</li>
+                    <li><strong>Không dây:</strong> Gồm các công nghệ như <code>WiMAX</code>, <code>mạng di động (Cellular)</code>, và <code>mạng vệ tinh (Satellite)</code>.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>6. Lớp Vật lý và Môi trường Truyền dẫn (Physical Layer & Transmission Media)</h2>
+        <ul>
+            <li><strong>Lớp Vật lý:</strong> Chuyển đổi các bit từ lớp liên kết dữ liệu thành <strong>tín hiệu điện từ</strong> để truyền đi qua môi trường vật lý. Nó xử lý cả tín hiệu <strong>tương tự (analog)</strong> và <strong>tín hiệu số (digital)</strong>.</li>
+            <li><strong>Môi trường truyền dẫn:</strong> Là đường dẫn vật lý mà tín hiệu đi qua.
+                <ul>
+                    <li><strong>Môi trường có hướng (Guided Media):</strong> Gồm các loại cáp vật lý như <code>cáp xoắn đôi (twisted-pair)</code>, <code>cáp đồng trục (coaxial)</code>, và <code>cáp quang (fiber-optic)</code>.</li>
+                    <li><strong>Môi trường không có hướng (Unguided Media):</strong> Truyền sóng điện từ qua không gian tự do, ví dụ như <code>sóng radio</code>, <code>vi sóng (microwaves)</code> và <code>hồng ngoại (infrared)</code>.</li>
+                </ul>
+            </li>
+        </ul>
+    `,
+    en: `
+        <h2>1. Overview of Networks and the Internet</h2>
+        <p>This chapter provides an overview of computer networks, the structure of the Internet, and delves into each layer of the <strong>TCP/IP protocol suite</strong>, which is the foundation for the modern Internet's operation.</p>
+        <ul>
+            <li><strong>Network:</strong> A collection of interconnected devices capable of communication.</li>
+            <li><strong>LAN (Local Area Network):</strong> A privately owned network connecting hosts in a limited area like an office or building.</li>
+            <li><strong>WAN (Wide Area Network):</strong> A network with a wider geographical span, connecting devices like switches, routers, or modems.</li>
+            <li><strong>Internetwork (internet):</strong> Created when two or more networks are connected.</li>
+            <li><strong>The Internet:</strong> The most notable internetwork, comprising thousands of interconnected networks globally. Its structure consists of <strong>backbones</strong>, <strong>Internet Service Providers (ISPs)</strong>, and customer networks.</li>
+        </ul>
+        <h3>The TCP/IP Protocol Suite</h3>
+        <p>A hierarchical protocol suite with 5 layers used in today's Internet:</p>
+        <ol>
+            <li>Application Layer</li>
+            <li>Transport Layer</li>
+            <li>Network Layer</li>
+            <li>Data-link Layer</li>
+            <li>Physical Layer</li>
+        </ol>
+
+        <h2>2. Application Layer</h2>
+        <p>This layer provides services directly to the user.</p>
+        <h3>Operating Models:</h3>
+        <ul>
+            <li><strong>Client-Server:</strong> A server runs continuously to provide services to multiple clients upon request. Common applications include the Web (<code>HTTP</code>), file transfer (<code>FTP</code>), and email.</li>
+            <li><strong>Peer-to-Peer (P2P):</strong> Computers share responsibilities equally, acting as both clients and servers. Often used for file sharing or Internet telephony.</li>
+        </ul>
+        <h3>Key Protocols:</h3>
+        <ul>
+            <li><strong>WWW and HTTP:</strong> Hypertext Transfer Protocol, used to access web pages.</li>
+            <li><strong>FTP:</strong> File Transfer Protocol, used for copying files from one host to another.</li>
+            <li><strong>Email:</strong> Allows users to exchange messages via agents like <code>User Agent (UA)</code>, <code>Mail Transfer Agent (MTA)</code>, and <code>Message Access Agent (MAA)</code>.</li>
+            <li><strong>TELNET and SSH:</strong> Provide remote login capabilities to another computer. <code>SSH</code> is the more secure version.</li>
+            <li><strong>DNS:</strong> Domain Name System, translates domain names (e.g., www.google.com) into <strong>IP addresses</strong> that computers understand.</li>
+        </ul>
+
+        <h2>3. Transport Layer</h2>
+        <p>This layer is responsible for providing <strong>process-to-process</strong> communication.</p>
+        <ul>
+            <li><strong>Addressing:</strong> Uses integers called <strong>port numbers</strong> to identify application layer programs at the source and destination.</li>
+        </ul>
+        <h3>Main Protocols:</h3>
+        <ul>
+            <li><strong>UDP (User Datagram Protocol):</strong> A <strong>connectionless</strong> and <strong>unreliable</strong> protocol. It is simple, fast, and has minimal overhead.</li>
+            <li><strong>TCP (Transmission Control Protocol):</strong> A <strong>connection-oriented</strong> and <strong>reliable</strong> protocol. It ensures that packets (<code>segments</code>) are delivered accurately and in the correct order.</li>
+        </ul>
+
+        <h2>4. Network Layer</h2>
+        <p>This layer is responsible for the delivery of packets from the <strong>source host to the destination host</strong>.</p>
+        <h3>Main Functions:</h3>
+        <ul>
+            <li><strong>Packetizing:</strong> Encapsulates data from the upper layer into packets (<code>datagrams</code>).</li>
+            <li><strong>Routing:</strong> Finds the best path for packets from the source to the destination via routers.</li>
+        </ul>
+        <h3>Main Protocols:</h3>
+        <ul>
+            <li><strong>IPv4:</strong> The widely used version of the Internet Protocol, using <strong>32-bit addresses</strong>.</li>
+            <li><strong>IPv6:</strong> A newer version with a <strong>128-bit address</strong> space, designed to solve the problem of IPv4 address exhaustion.</li>
+        </ul>
+
+        <h2>5. Data-Link Layer</h2>
+        <p>This layer handles the transmission of data between <strong>adjacent nodes</strong> in a network (<strong>node-to-node</strong>).</p>
+        <ul>
+            <li><strong>LANs:</strong>
+                <ul>
+                    <li><strong>Wired:</strong> <code>Ethernet</code> is the most common technology, with generations of 10 Mbps, 100 Mbps, 1 Gbps, and 10 Gbps.</li>
+                    <li><strong>Wireless:</strong> Includes <code>WiFi</code> (Wireless Ethernet) and <code>Bluetooth</code> (for short-range connections).</li>
+                </ul>
+            </li>
+            <li><strong>WANs:</strong>
+                <ul>
+                    <li><strong>Wired:</strong> Includes services like <code>Dial-up</code>, <code>DSL</code> (Digital Subscriber Line), and <code>Cable Network</code>.</li>
+                    <li><strong>Wireless:</strong> Includes technologies like <code>WiMAX</code>, <code>Cellular networks</code>, and <code>Satellite networks</code>.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>6. Physical Layer & Transmission Media</h2>
+        <ul>
+            <li><strong>Physical Layer:</strong> Converts bits from the data-link layer into <strong>electromagnetic signals</strong> for transmission over a physical medium. It deals with both <strong>analog</strong> and <strong>digital</strong> signals.</li>
+            <li><strong>Transmission Media:</strong> The physical path through which a signal travels.
+                <ul>
+                    <li><strong>Guided Media:</strong> Physical cables like <code>twisted-pair</code>, <code>coaxial</code>, and <code>fiber-optic</code> cables.</li>
+                    <li><strong>Unguided Media:</strong> Transmits electromagnetic waves through free space, such as <code>radio waves</code>, <code>microwaves</code>, and <code>infrared</code>.</li>
+                </ul>
+            </li>
+        </ul>
+    `
+};
+
+const quizData = [
+    {
+        "id": 1,
+        "question": {
+            "vi": "Mạng nào sau đây thường có phạm vi giới hạn trong một tòa nhà hoặc một khuôn viên trường học?",
+            "en": "Which of the following networks is typically limited in scope to a single building or a campus?"
+        },
+        "options": [
+            { "vi": "WAN", "en": "WAN" },
+            { "vi": "LAN", "en": "LAN" },
+            { "vi": "Internet", "en": "Internet" },
+            { "vi": "MAN", "en": "MAN" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "LAN là viết tắt của Local Area Network (Mạng Cục bộ). Chữ 'Local' (cục bộ) ám chỉ một khu vực nhỏ, gần gũi.",
+            "en": "LAN stands for Local Area Network. The word 'Local' implies a small, nearby area."
         }
+    },
+    {
+        "id": 2,
+        "question": {
+            "vi": "Sự khác biệt cơ bản giữa 'internet' (chữ i thường) và 'Internet' (chữ I hoa) là gì?",
+            "en": "What is the fundamental difference between 'internet' (lowercase i) and 'Internet' (uppercase I)?"
+        },
+        "options": [
+            { "vi": "Không có sự khác biệt", "en": "There is no difference" },
+            { "vi": "'internet' là một liên mạng bất kỳ, 'Internet' là mạng toàn cầu", "en": "'internet' is any internetwork, 'Internet' is the global network" },
+            { "vi": "'internet' là mạng không dây, 'Internet' là mạng có dây", "en": "'internet' is a wireless network, 'Internet' is a wired network" },
+            { "vi": "'internet' là tên cũ của 'Internet'", "en": "'internet' is the old name for 'Internet'" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Một 'internet' (internetwork) là khi bạn kết nối hai mạng LAN với nhau. 'The Internet' là internetwork lớn nhất, là cái chúng ta sử dụng hàng ngày.",
+            "en": "An 'internet' (internetwork) is when you connect two LANs. 'The Internet' is the largest internetwork, the one we use daily."
+        }
+    },
+    {
+        "id": 3,
+        "question": {
+            "vi": "Một thiết bị như máy tính để bàn, laptop, hoặc điện thoại di động trong mạng được gọi là gì?",
+            "en": "What is a device such as a desktop, laptop, or mobile phone on a network called?"
+        },
+        "options": [
+            { "vi": "A host (or end system)", "en": "A host (or end system)" },
+            { "vi": "A connecting device", "en": "A connecting device" },
+            { "vi": "A router", "en": "A router" },
+            { "vi": "A modem", "en": "A modem" }
+        ],
+        "correctAnswerIndex": 0,
+        "tip": {
+            "vi": "Host (vật chủ) hoặc End System (hệ thống đầu cuối) là những thiết bị mà người dùng tương tác trực tiếp. Router, switch là thiết bị kết nối.",
+            "en": "A Host or End System is a device that users interact with directly. Routers and switches are connecting devices."
+        }
+    },
+    {
+        "id": 4,
+        "question": {
+            "vi": "Thiết bị nào chịu trách nhiệm kết nối các mạng khác nhau để tạo thành một internetwork?",
+            "en": "Which device is responsible for connecting different networks to form an internetwork?"
+        },
+        "options": [
+            { "vi": "Switch", "en": "Switch" },
+            { "vi": "Modem", "en": "Modem" },
+            { "vi": "Router", "en": "Router" },
+            { "vi": "Host", "en": "Host" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Router (bộ định tuyến) có chức năng tìm 'đường đi' (route) để kết nối các mạng khác nhau. Switch chỉ hoạt động trong cùng một mạng LAN.",
+            "en": "A Router's function is to find a 'route' to connect different networks. A Switch only operates within the same LAN."
+        }
+    },
+    {
+        "id": 5,
+        "question": {
+            "vi": "Các công ty như FPT, Viettel, VNPT cung cấp dịch vụ kết nối Internet được gọi là gì?",
+            "en": "What are companies like FPT, Viettel, VNPT that provide Internet connection services called?"
+        },
+        "options": [
+            { "vi": "End systems", "en": "End systems" },
+            { "vi": "Peering Points", "en": "Peering Points" },
+            { "vi": "Backbones", "en": "Backbones" },
+            { "vi": "Internet Service Providers (ISPs)", "en": "Internet Service Providers (ISPs)" }
+        ],
+        "correctAnswerIndex": 3,
+        "tip": {
+            "vi": "ISP là viết tắt của Internet Service Provider, nghĩa là Nhà cung cấp Dịch vụ Internet.",
+            "en": "ISP stands for Internet Service Provider."
+        }
+    },
+    {
+        "id": 6,
+        "question": {
+            "vi": "Mạng WAN điểm-tới-điểm (Point-to-point WAN) kết nối bao nhiêu thiết bị?",
+            "en": "How many devices does a Point-to-point WAN connect?"
+        },
+        "options": [
+            { "vi": "Một", "en": "One" },
+            { "vi": "Hai", "en": "Two" },
+            { "vi": "Nhiều hơn hai", "en": "More than two" },
+            { "vi": "Tùy thuộc vào băng thông", "en": "Depends on the bandwidth" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Tên gọi đã nói lên tất cả: 'Point-to-point' nghĩa là từ một điểm đến một điểm khác, tức là kết nối hai thiết bị.",
+            "en": "The name says it all: 'Point-to-point' means from one point to another, thus connecting two devices."
+        }
+    },
+    {
+        "id": 7,
+        "question": {
+            "vi": "Trong cấu trúc phân cấp của Internet, các mạng lớn nhất, sở hữu bởi các công ty truyền thông lớn, được gọi là gì?",
+            "en": "In the hierarchical structure of the Internet, what are the largest networks, owned by major communication companies, called?"
+        },
+        "options": [
+            { "vi": "Customer networks", "en": "Customer networks" },
+            { "vi": "Provider networks", "en": "Provider networks" },
+            { "vi": "Backbones", "en": "Backbones" },
+            { "vi": "Peering points", "en": "Peering points" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Backbone (xương sống) là thuật ngữ chỉ các mạng đường trục, cốt lõi, lớn nhất của Internet.",
+            "en": "Backbone is the term for the core, largest networks of the Internet."
+        }
+    },
+    {
+        "id": 8,
+        "question": {
+            "vi": "Điều gì cần thiết để giao tiếp mạng có thể xảy ra, ngoài việc kết nối phần cứng?",
+            "en": "What is necessary for network communication to occur, besides connecting the hardware?"
+        },
+        "options": [
+            { "vi": "Chỉ cần phần cứng là đủ", "en": "Hardware is sufficient" },
+            { "vi": "Cần cả phần cứng (hardware) và phần mềm (software)", "en": "Both hardware and software are needed" },
+            { "vi": "Chỉ cần phần mềm", "en": "Only software is needed" },
+            { "vi": "Cần một modem", "en": "A modem is needed" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Phần cứng là cơ thể, phần mềm (giao thức) là bộ não điều khiển. Cần cả hai để hoạt động.",
+            "en": "Hardware is the body, software (protocols) is the brain that controls it. Both are needed to function."
+        }
+    },
+    {
+        "id": 9,
+        "question": {
+            "vi": "Một bộ quy tắc (rules) mà cả bên gửi và bên nhận cần tuân theo để giao tiếp hiệu quả được gọi là gì?",
+            "en": "What is a set of rules that both the sender and receiver must follow for effective communication called?"
+        },
+        "options": [
+            { "vi": "A layer", "en": "A layer" },
+            { "vi": "A module", "en": "A module" },
+            { "vi": "A protocol", "en": "A protocol" },
+            { "vi": "An internet", "en": "An internet" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Protocol (giao thức) giống như 'ngôn ngữ' và 'quy tắc ứng xử' chung mà các máy tính sử dụng để 'nói chuyện' với nhau.",
+            "en": "A Protocol is like a common 'language' and 'etiquette' that computers use to 'talk' to each other."
+        }
+    },
+    {
+        "id": 10,
+        "question": {
+            "vi": "Mạng LAN thường là sở hữu của ai?",
+            "en": "Who typically owns a LAN?"
+        },
+        "options": [
+            { "vi": "Chính phủ", "en": "The government" },
+            { "vi": "Các công ty viễn thông", "en": "Telecommunication companies" },
+            { "vi": "Tổ chức tư nhân sử dụng nó", "en": "The private organization that uses it" },
+            { "vi": "Không ai sở hữu", "en": "No one owns it" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Mạng LAN của FPT University là do FPT University sở hữu và quản lý. LAN = Local = Private ownership.",
+            "en": "FPT University's LAN is owned and managed by FPT University. LAN = Local = Private ownership."
+        }
+    },
+    {
+        "id": 11,
+        "question": {
+            "vi": "Mạng WAN thường được tạo ra và vận hành bởi ai?",
+            "en": "Who typically creates and operates a WAN?"
+        },
+        "options": [
+            { "vi": "Người dùng cá nhân", "en": "Individual users" },
+            { "vi": "Các công ty truyền thông (communication companies)", "en": "Communication companies" },
+            { "vi": "Các tổ chức phi lợi nhuận", "en": "Non-profit organizations" },
+            { "vi": "Các trường đại học", "en": "Universities" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Mạng WAN trải dài trên khu vực rộng lớn, cần nguồn lực của các công ty viễn thông/truyền thông lớn để xây dựng và vận hành.",
+            "en": "WANs span large areas and require the resources of large communication companies to build and operate."
+        }
+    },
+    {
+        "id": 12,
+        "question": {
+            "vi": "Thiết bị nào kết nối các host với nhau trong một mạng LAN?",
+            "en": "Which device connects hosts together within a LAN?"
+        },
+        "options": [
+            { "vi": "Router", "en": "Router" },
+            { "vi": "Switch", "en": "Switch" },
+            { "vi": "Modem", "en": "Modem" },
+            { "vi": "ISP", "en": "ISP" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Switch (bộ chuyển mạch) hoạt động như một trung tâm kết nối cho các thiết bị trong cùng một mạng LAN. Router dùng để nối các mạng LAN khác nhau.",
+            "en": "A Switch acts as a central connection point for devices within the same LAN. A Router is used to connect different LANs."
+        }
+    },
+    {
+        "id": 13,
+        "question": {
+            "vi": "'Internetwork' là thuật ngữ dùng để chỉ điều gì?",
+            "en": "What does the term 'Internetwork' refer to?"
+        },
+        "options": [
+            { "vi": "Một mạng LAN duy nhất", "en": "A single LAN" },
+            { "vi": "Một mạng WAN duy nhất", "en": "A single WAN" },
+            { "vi": "Khi hai hoặc nhiều mạng được kết nối với nhau", "en": "When two or more networks are connected" },
+            { "vi": "Tên gọi khác của World Wide Web", "en": "Another name for the World Wide Web" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Inter-network có nghĩa là 'giữa các mạng', tức là sự kết nối của nhiều mạng lại với nhau.",
+            "en": "Inter-network means 'between networks,' referring to the connection of multiple networks."
+        }
+    },
+    {
+        "id": 14,
+        "question": {
+            "vi": "Các điểm kết nối phức tạp giữa các mạng backbone được gọi là gì?",
+            "en": "What are the complex connection points between backbone networks called?"
+        },
+        "options": [
+            { "vi": "Router points", "en": "Router points" },
+            { "vi": "Switching points", "en": "Switching points" },
+            { "vi": "Peering points", "en": "Peering points" },
+            { "vi": "ISP hubs", "en": "ISP hubs" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Peering points là nơi các mạng lớn 'nhìn' (peer) vào nhau và trao đổi lưu lượng truy cập.",
+            "en": "Peering points are where large networks 'peer' at each other and exchange traffic."
+        }
+    },
+    {
+        "id": 15,
+        "question": {
+            "vi": "Tại sao cần phải có cả phần cứng và phần mềm cho việc giao tiếp mạng?",
+            "en": "Why are both hardware and software necessary for network communication?"
+        },
+        "options": [
+            { "vi": "Phần cứng để chạy phần mềm", "en": "Hardware to run software" },
+            { "vi": "Phần mềm để điều khiển phần cứng", "en": "Software to control hardware" },
+            { "vi": "Chỉ kết nối phần cứng sẽ không có gì xảy ra, cần phần mềm (protocol) để điều phối", "en": "Connecting hardware alone does nothing; software (protocols) is needed to coordinate" },
+            { "vi": "Để tăng tốc độ mạng", "en": "To increase network speed" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Giống như có một dàn nhạc cụ (phần cứng) nhưng không có nhạc trưởng và bản nhạc (phần mềm/giao thức), sẽ không có bản giao hưởng nào được tạo ra.",
+            "en": "It's like having orchestra instruments (hardware) but no conductor and sheet music (software/protocol); no symphony will be played."
+        }
+    },
+    {
+        "id": 16,
+        "question": {
+            "vi": "Lợi ích chính của việc phân tầng giao thức (protocol layering) là gì?",
+            "en": "What is the main benefit of protocol layering?"
+        },
+        "options": [
+            { "vi": "Làm cho giao tiếp trở nên phức tạp hơn", "en": "It makes communication more complex" },
+            { "vi": "Chia một công việc phức tạp thành các công việc nhỏ hơn, đơn giản hơn", "en": "It breaks a complex task into smaller, simpler tasks" },
+            { "vi": "Yêu cầu tất cả các lớp phải được thực hiện bởi cùng một nhà sản xuất", "en": "It requires all layers to be made by the same manufacturer" },
+            { "vi": "Giảm số lượng thiết bị cần thiết", "en": "It reduces the number of required devices" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Phân tầng giúp tạo ra tính 'module hóa'. Nếu muốn nâng cấp một chức năng (ví dụ: mã hóa), bạn chỉ cần thay đổi tầng tương ứng mà không ảnh hưởng đến các tầng khác.",
+            "en": "Layering enables 'modularity.' If you want to upgrade a function (e.g., encryption), you only need to change the corresponding layer without affecting others."
+        }
+    },
+    {
+        "id": 17,
+        "question": {
+            "vi": "Mô hình TCP/IP được thảo luận trong sách có bao nhiêu tầng?",
+            "en": "How many layers does the TCP/IP model discussed in the book have?"
+        },
+        "options": [
+            { "vi": "3", "en": "3" },
+            { "vi": "4", "en": "4" },
+            { "vi": "5", "en": "5" },
+            { "vi": "7", "en": "7" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Mô hình 5 tầng trong sách: Application, Transport, Network, Data-Link, Physical. Đừng nhầm với mô hình OSI 7 tầng.",
+            "en": "The 5-layer model in the book: Application, Transport, Network, Data-Link, Physical. Don't confuse it with the 7-layer OSI model."
+        }
+    },
+    {
+        "id": 18,
+        "question": {
+            "vi": "Tầng nào trong mô hình TCP/IP cung cấp dịch vụ trực tiếp cho người dùng?",
+            "en": "Which layer in the TCP/IP model provides services directly to the user?"
+        },
+        "options": [
+            { "vi": "Physical", "en": "Physical" },
+            { "vi": "Network", "en": "Network" },
+            { "vi": "Transport", "en": "Transport" },
+            { "vi": "Application", "en": "Application" }
+        ],
+        "correctAnswerIndex": 3,
+        "tip": {
+            "vi": "Tầng Application (Ứng dụng) là tầng cao nhất, gần với người dùng nhất, chứa các ứng dụng như trình duyệt web, email.",
+            "en": "The Application layer is the highest layer, closest to the user, containing applications like web browsers and email."
+        }
+    },
+    {
+        "id": 19,
+        "question": {
+            "vi": "Tầng nào chịu trách nhiệm cho việc giao nhận tin cậy từ process-đến-process?",
+            "en": "Which layer is responsible for reliable process-to-process delivery?"
+        },
+        "options": [
+            { "vi": "Application", "en": "Application" },
+            { "vi": "Transport", "en": "Transport" },
+            { "vi": "Network", "en": "Network" },
+            { "vi": "Data-Link", "en": "Data-Link" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Transport (Giao vận) giống như dịch vụ chuyển phát đảm bảo, đưa 'thư' (dữ liệu) đến đúng 'phòng ban' (process) trong một 'tòa nhà' (máy tính).",
+            "en": "The Transport layer is like a guaranteed delivery service, getting the 'letter' (data) to the right 'department' (process) in a 'building' (computer)."
+        }
+    },
+    {
+        "id": 20,
+        "question": {
+            "vi": "Việc tìm đường đi tốt nhất (routing) trên Internet là nhiệm vụ của tầng nào?",
+            "en": "Finding the best path (routing) on the Internet is the task of which layer?"
+        },
+        "options": [
+            { "vi": "Transport", "en": "Transport" },
+            { "vi": "Network", "en": "Network" },
+            { "vi": "Data-Link", "en": "Data-Link" },
+            { "vi": "Physical", "en": "Physical" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Tầng Network (Mạng) hoạt động như hệ thống GPS của Internet, xác định đường đi cho các gói tin.",
+            "en": "The Network layer acts like the Internet's GPS, determining the path for packets."
+        }
+    },
+    {
+        "id": 21,
+        "question": {
+            "vi": "Tầng nào chịu trách nhiệm truyền các khung tin (frames) giữa hai nút mạng kề nhau?",
+            "en": "Which layer is responsible for transmitting frames between two adjacent network nodes?"
+        },
+        "options": [
+            { "vi": "Network", "en": "Network" },
+            { "vi": "Data-Link", "en": "Data-Link" },
+            { "vi": "Physical", "en": "Physical" },
+            { "vi": "Transport", "en": "Transport" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Data-Link (Liên kết dữ liệu) xử lý việc di chuyển dữ liệu qua một 'liên kết' (link) duy nhất, ví dụ từ máy tính của bạn đến router.",
+            "en": "The Data-Link layer handles data movement across a single 'link,' for example, from your computer to the router."
+        }
+    },
+    {
+        "id": 22,
+        "question": {
+            "vi": "Quá trình biến các bit thành tín hiệu điện từ để truyền đi thuộc về tầng nào?",
+            "en": "The process of converting bits into electromagnetic signals for transmission belongs to which layer?"
+        },
+        "options": [
+            { "vi": "Data-Link", "en": "Data-Link" },
+            { "vi": "Physical", "en": "Physical" },
+            { "vi": "Network", "en": "Network" },
+            { "vi": "Transport", "en": "Transport" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Tầng Physical (Vật lý) làm công việc vật lý nhất: chuyển đổi dữ liệu số (bit) thành thứ có thể truyền đi được (sóng, ánh sáng, điện).",
+            "en": "The Physical layer does the most physical job: converting digital data (bits) into something transmittable (waves, light, electricity)."
+        }
+    },
+    {
+        "id": 23,
+        "question": {
+            "vi": "Quá trình một tầng thêm thông tin điều khiển (header) của mình vào dữ liệu nhận từ tầng trên được gọi là gì?",
+            "en": "What is the process called when a layer adds its own control information (header) to the data received from the layer above?"
+        },
+        "options": [
+            { "vi": "Decapsulation", "en": "Decapsulation" },
+            { "vi": "Encapsulation", "en": "Encapsulation" },
+            { "vi": "Fragmentation", "en": "Fragmentation" },
+            { "vi": "Modulation", "en": "Modulation" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Encapsulation (Đóng gói) giống như việc bỏ một lá thư vào phong bì, rồi lại bỏ phong bì đó vào một cái hộp. Mỗi lớp 'đóng gói' dữ liệu của lớp trên.",
+            "en": "Encapsulation is like putting a letter in an envelope, then putting that envelope in a box. Each layer 'encapsulates' the data from the layer above."
+        }
+    },
+    {
+        "id": 24,
+        "question": {
+            "vi": "Đơn vị dữ liệu (data unit) ở tầng Application được gọi là gì?",
+            "en": "What is the data unit at the Application layer called?"
+        },
+        "options": [
+            { "vi": "Frame", "en": "Frame" },
+            { "vi": "Datagram", "en": "Datagram" },
+            { "vi": "Segment", "en": "Segment" },
+            { "vi": "Message", "en": "Message" }
+        ],
+        "correctAnswerIndex": 3,
+        "tip": {
+            "vi": "Ở tầng ứng dụng, chúng ta làm việc với dữ liệu gốc mà người dùng tạo ra, gọi là Message (Thông điệp).",
+            "en": "At the application layer, we work with the original data created by the user, called a Message."
+        }
+    },
+    {
+        "id": 25,
+        "question": {
+            "vi": "Đơn vị dữ liệu ở tầng Transport khi sử dụng giao thức TCP được gọi là gì?",
+            "en": "What is the data unit at the Transport layer when using the TCP protocol called?"
+        },
+        "options": [
+            { "vi": "User Datagram", "en": "User Datagram" },
+            { "vi": "Frame", "en": "Frame" },
+            { "vi": "Segment", "en": "Segment" },
+            { "vi": "Datagram", "en": "Datagram" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "TCP chia message thành các Segment (Phân đoạn). Hãy nhớ: TCP -> Segment.",
+            "en": "TCP divides a message into Segments. Remember: TCP -> Segment."
+        }
+    },
+    {
+        "id": 26,
+        "question": {
+            "vi": "Đơn vị dữ liệu ở tầng Network được gọi là gì?",
+            "en": "What is the data unit at the Network layer called?"
+        },
+        "options": [
+            { "vi": "Message", "en": "Message" },
+            { "vi": "Segment", "en": "Segment" },
+            { "vi": "Datagram", "en": "Datagram" },
+            { "vi": "Frame", "en": "Frame" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Tầng Network xử lý các Datagram. Hãy nhớ: Network -> Datagram/Packet.",
+            "en": "The Network layer deals with Datagrams. Remember: Network -> Datagram/Packet."
+        }
+    },
+    {
+        "id": 27,
+        "question": {
+            "vi": "Đơn vị dữ liệu ở tầng Data-Link được gọi là gì?",
+            "en": "What is the data unit at the Data-Link layer called?"
+        },
+        "options": [
+            { "vi": "Datagram", "en": "Datagram" },
+            { "vi": "Bit", "en": "Bit" },
+            { "vi": "Frame", "en": "Frame" },
+            { "vi": "Packet", "en": "Packet" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Tầng Data-Link đóng gói datagram thành các Frame (Khung tin). Hãy nhớ: Data-Link -> Frame.",
+            "en": "The Data-Link layer encapsulates datagrams into Frames. Remember: Data-Link -> Frame."
+        }
+    },
+    {
+        "id": 28,
+        "question": {
+            "vi": "Loại địa chỉ nào được sử dụng ở tầng Transport để xác định các tiến trình ứng dụng?",
+            "en": "What type of address is used at the Transport layer to identify application processes?"
+        },
+        "options": [
+            { "vi": "IP address", "en": "IP address" },
+            { "vi": "MAC address", "en": "MAC address" },
+            { "vi": "Port number", "en": "Port number" },
+            { "vi": "Domain name", "en": "Domain name" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Địa chỉ IP để tìm đúng 'tòa nhà' (máy tính), Port number (số hiệu cổng) để tìm đúng 'phòng ban' (ứng dụng) bên trong tòa nhà đó.",
+            "en": "The IP address finds the right 'building' (computer), the Port number finds the right 'department' (application) inside that building."
+        }
+    },
+    {
+        "id": 29,
+        "question": {
+            "vi": "Địa chỉ IP (ví dụ: 192.168.1.1) là địa chỉ được sử dụng ở tầng nào?",
+            "en": "At which layer is an IP address (e.g., 192.168.1.1) used?"
+        },
+        "options": [
+            { "vi": "Application", "en": "Application" },
+            { "vi": "Transport", "en": "Transport" },
+            { "vi": "Network", "en": "Network" },
+            { "vi": "Data-Link", "en": "Data-Link" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Chính cái tên đã nói lên tất cả: IP Address được dùng ở tầng IP, tức là tầng Network.",
+            "en": "The name says it all: an IP Address is used at the IP layer, which is the Network layer."
+        }
+    },
+    {
+        "id": 30,
+        "question": {
+            "vi": "Địa chỉ MAC (ví dụ: 0A:1B:2C:3D:4E:5F) là địa chỉ được sử dụng ở tầng nào?",
+            "en": "At which layer is a MAC address (e.g., 0A:1B:2C:3D:4E:5F) used?"
+        },
+        "options": [
+            { "vi": "Physical", "en": "Physical" },
+            { "vi": "Network", "en": "Network" },
+            { "vi": "Data-Link", "en": "Data-Link" },
+            { "vi": "Application", "en": "Application" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Địa chỉ MAC (địa chỉ vật lý) được ghi cứng trên card mạng và được dùng ở tầng Data-Link để giao tiếp trong cùng một mạng LAN.",
+            "en": "The MAC address (physical address) is hard-coded on the network card and is used at the Data-Link layer for communication within the same LAN."
+        }
+    },
+    {
+        "id": 31,
+        "question": {
+            "vi": "Một Router, khi chỉ thực hiện chức năng định tuyến, hoạt động ở tối đa bao nhiêu tầng của mô hình TCP/IP?",
+            "en": "A Router, when performing only its routing function, operates at a maximum of how many layers of the TCP/IP model?"
+        },
+        "options": [
+            { "vi": "2 tầng (Physical, Data-Link)", "en": "2 layers (Physical, Data-Link)" },
+            { "vi": "3 tầng (Physical, Data-Link, Network)", "en": "3 layers (Physical, Data-Link, Network)" },
+            { "vi": "4 tầng", "en": "4 layers" },
+            { "vi": "5 tầng", "en": "5 layers" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Router cần 'mở' gói tin đến tầng Network để đọc địa chỉ IP đích và quyết định đường đi. Nó không cần quan tâm đến dữ liệu của tầng Transport hay Application.",
+            "en": "A router needs to 'open' the packet up to the Network layer to read the destination IP address and decide the route. It doesn't need to care about Transport or Application layer data."
+        }
+    },
+    {
+        "id": 32,
+        "question": {
+            "vi": "Một Switch hoạt động ở những tầng nào?",
+            "en": "At which layers does a Switch operate?"
+        },
+        "options": [
+            { "vi": "Chỉ tầng Physical", "en": "Only the Physical layer" },
+            { "vi": "Tầng Physical và Data-Link", "en": "Physical and Data-Link layers" },
+            { "vi": "Tầng Physical, Data-Link và Network", "en": "Physical, Data-Link, and Network layers" },
+            { "vi": "Tất cả 5 tầng", "en": "All 5 layers" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Switch thông thường (Layer 2 Switch) đọc địa chỉ MAC để chuyển frame trong LAN. Địa chỉ MAC thuộc tầng Data-Link. Nó cũng phải xử lý tín hiệu ở tầng Physical.",
+            "en": "A standard switch (Layer 2 Switch) reads MAC addresses to forward frames in a LAN. MAC addresses belong to the Data-Link layer. It must also handle signals at the Physical layer."
+        }
+    },
+    {
+        "id": 33,
+        "question": {
+            "vi": "Tầng nào không cần địa chỉ nguồn và đích?",
+            "en": "Which layer does not need source and destination addresses?"
+        },
+        "options": [
+            { "vi": "Application", "en": "Application" },
+            { "vi": "Transport", "en": "Transport" },
+            { "vi": "Network", "en": "Network" },
+            { "vi": "Physical", "en": "Physical" }
+        ],
+        "correctAnswerIndex": 3,
+        "tip": {
+            "vi": "Tầng Physical chỉ đơn giản là truyền đi một dòng bit (tín hiệu). Nó không biết và không cần biết bit này của ai hay gửi cho ai. Việc định địa chỉ là của các tầng trên.",
+            "en": "The Physical layer simply transmits a stream of bits (signals). It doesn't know or need to know whose bits these are or where they are going. Addressing is the job of the upper layers."
+        }
+    },
+    {
+        "id": 34,
+        "question": {
+            "vi": "Trong ví dụ về Maria và Ann gửi thư, việc mã hóa/giải mã lá thư tương ứng với nhiệm vụ của tầng nào?",
+            "en": "In the example of Maria and Ann sending letters, which layer's task corresponds to encrypting/decrypting the letter?"
+        },
+        "options": [
+            { "vi": "Layer 1 (Send/receive mail)", "en": "Layer 1 (Send/receive mail)" },
+            { "vi": "Layer 2 (Encrypt/Decrypt)", "en": "Layer 2 (Encrypt/Decrypt)" },
+            { "vi": "Layer 3 (Listen/Talk)", "en": "Layer 3 (Listen/Talk)" },
+            { "vi": "Postal carrier facility", "en": "Postal carrier facility" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Tầng 3 (Listen/Talk) là tầng ứng dụng, tạo ra nội dung. Tầng 2 (Encrypt/Decrypt) là tầng trình bày, xử lý định dạng/bảo mật. Tầng 1 (Send/receive) là tầng vật lý, gửi thư đi.",
+            "en": "Layer 3 (Listen/Talk) is the application layer, creating content. Layer 2 (Encrypt/Decrypt) is the presentation layer, handling formatting/security. Layer 1 (Send/receive) is the physical layer, sending the mail."
+        }
+    },
+    {
+        "id": 35,
+        "question": {
+            "vi": "Nguyên tắc 'kết nối logic' (logical connection) có nghĩa là gì?",
+            "en": "What does the principle of 'logical connection' mean?"
+        },
+        "options": [
+            { "vi": "Có một kết nối vật lý trực tiếp giữa hai tầng ngang hàng", "en": "There is a direct physical connection between two peer layers" },
+            { "vi": "Hai tầng ngang hàng ở hai máy khác nhau có thể tưởng tượng rằng chúng đang giao tiếp trực tiếp với nhau", "en": "Two peer layers on different machines can imagine that they are communicating directly with each other" },
+            { "vi": "Tất cả các tầng đều được kết nối với nhau bằng logic", "en": "All layers are logically connected" },
+            { "vi": "Kết nối chỉ tồn tại trong phần mềm", "en": "The connection only exists in software" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Tầng Application ở máy A 'nói chuyện' với tầng Application ở máy B một cách logic. Thực tế, dữ liệu phải đi xuống tất cả các tầng ở máy A, qua mạng, rồi đi lên các tầng ở máy B.",
+            "en": "The Application layer on machine A 'talks' to the Application layer on machine B logically. In reality, the data must travel down all layers on A, across the network, and then up the layers on B."
+        }
+    },
+    {
+        "id": 36,
+        "question": {
+            "vi": "Mô hình nào yêu cầu một máy chủ (server) phải luôn chạy để chờ yêu cầu từ máy khách (client)?",
+            "en": "Which model requires a server to be always running to wait for requests from a client?"
+        },
+        "options": [
+            { "vi": "Peer-to-peer", "en": "Peer-to-peer" },
+            { "vi": "Client-server", "en": "Client-server" },
+            { "vi": "Ad hoc", "en": "Ad hoc" },
+            { "vi": "Hybrid", "en": "Hybrid" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Trong mô hình Client-Server, Server là 'người phục vụ' luôn phải túc trực để sẵn sàng đáp ứng khi có 'khách hàng' (Client) đến.",
+            "en": "In the Client-Server model, the Server is the 'waiter' who must always be on duty, ready to respond when a 'customer' (Client) arrives."
+        }
+    },
+    {
+        "id": 37,
+        "question": {
+            "vi": "Trong mô hình Peer-to-Peer (P2P), một máy tính có thể đóng vai trò gì?",
+            "en": "In the Peer-to-Peer (P2P) model, what role can a computer play?"
+        },
+        "options": [
+            { "vi": "Chỉ là client", "en": "Only as a client" },
+            { "vi": "Chỉ là server", "en": "Only as a server" },
+            { "vi": "Vừa là client, vừa là server", "en": "Both as a client and a server" },
+            { "vi": "Không là gì cả", "en": "Neither" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "P2P là 'ngang hàng', mọi người đều bình đẳng. Máy của bạn vừa có thể tải file từ người khác (client), vừa có thể cho người khác tải file (server).",
+            "en": "P2P means 'peer-to-peer,' everyone is equal. Your machine can download files from others (client) and also serve files to others (server)."
+        }
+    },
+    {
+        "id": 38,
+        "question": {
+            "vi": "Giao thức nào là phương tiện chính để truy cập World Wide Web?",
+            "en": "Which protocol is the primary means of accessing the World Wide Web?"
+        },
+        "options": [
+            { "vi": "FTP", "en": "FTP" },
+            { "vi": "SMTP", "en": "SMTP" },
+            { "vi": "HTTP", "en": "HTTP" },
+            { "vi": "DNS", "en": "DNS" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "HTTP là viết tắt của HyperText Transfer Protocol. Các địa chỉ web luôn bắt đầu bằng 'http://' hoặc 'https://'.",
+            "en": "HTTP stands for HyperText Transfer Protocol. Web addresses always start with 'http://' or 'https://'."
+        }
+    },
+    {
+        "id": 39,
+        "question": {
+            "vi": "Chức năng chính của DNS là gì?",
+            "en": "What is the main function of DNS?"
+        },
+        "options": [
+            { "vi": "Gửi email", "en": "Sending email" },
+            { "vi": "Truyền tải file", "en": "Transferring files" },
+            { "vi": "Dịch tên miền (domain name) sang địa chỉ IP", "en": "Translating a domain name to an IP address" },
+            { "vi": "Cung cấp kết nối an toàn", "en": "Providing a secure connection" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "DNS giống như 'danh bạ điện thoại' của Internet. Bạn tìm theo tên (fpt.edu.vn), nó sẽ trả về số điện thoại (địa chỉ IP).",
+            "en": "DNS is like the 'phone book' of the Internet. You look up a name (fpt.edu.vn), and it returns the phone number (IP address)."
+        }
+    },
+    {
+        "id": 40,
+        "question": {
+            "vi": "Một người dùng gõ 'fpt.edu.vn' vào trình duyệt. Giao thức nào sẽ được sử dụng ĐẦU TIÊN để tìm ra địa chỉ của máy chủ web?",
+            "en": "A user types 'fpt.edu.vn' into the browser. Which protocol will be used FIRST to find the web server's address?"
+        },
+        "options": [
+            { "vi": "HTTP", "en": "HTTP" },
+            { "vi": "DNS", "en": "DNS" },
+            { "vi": "TCP", "en": "TCP" },
+            { "vi": "FTP", "en": "FTP" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Trước khi có thể gửi yêu cầu HTTP, máy tính của bạn phải biết địa chỉ IP của 'fpt.edu.vn'. Nó phải hỏi DNS trước.",
+            "en": "Before it can send an HTTP request, your computer must know the IP address of 'fpt.edu.vn'. It has to ask DNS first."
+        }
+    },
+    {
+        "id": 41,
+        "question": {
+            "vi": "Trong một URL như 'http://www.example.com:80/path/to/file', '80' là gì?",
+            "en": "In a URL like 'http://www.example.com:80/path/to/file', what is '80'?"
+        },
+        "options": [
+            { "vi": "Host identifier", "en": "Host identifier" },
+            { "vi": "Protocol", "en": "Protocol" },
+            { "vi": "Path", "en": "Path" },
+            { "vi": "Port number", "en": "Port number" }
+        ],
+        "correctAnswerIndex": 3,
+        "tip": {
+            "vi": "Số đứng sau dấu hai chấm (:) trong địa chỉ host chính là Port number (số hiệu cổng). Cổng 80 là cổng mặc định cho HTTP.",
+            "en": "The number after the colon (:) in the host address is the Port number. Port 80 is the default port for HTTP."
+        }
+    },
+    {
+        "id": 42,
+        "question": {
+            "vi": "Giao thức FTP (File Transfer Protocol) sử dụng bao nhiêu kết nối TCP song song để hoạt động?",
+            "en": "How many parallel TCP connections does the FTP (File Transfer Protocol) use to operate?"
+        },
+        "options": [
+            { "vi": "Một, cho cả điều khiển và dữ liệu", "en": "One, for both control and data" },
+            { "vi": "Hai, một cho điều khiển (control) và một cho dữ liệu (data)", "en": "Two, one for control and one for data" },
+            { "vi": "Ba, một cho điều khiển, một cho tải lên, một cho tải xuống", "en": "Three, one for control, one for upload, one for download" },
+            { "vi": "Không sử dụng TCP", "en": "It doesn't use TCP" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "FTP tách bạch công việc: một kết nối để 'ra lệnh' (control connection) và một kết nối riêng để 'chuyển hàng' (data connection).",
+            "en": "FTP separates tasks: one connection to 'give commands' (control connection) and a separate one to 'transfer goods' (data connection)."
+        }
+    },
+    {
+        "id": 43,
+        "question": {
+            "vi": "Trong FTP, kết nối nào duy trì trong suốt phiên làm việc?",
+            "en": "In FTP, which connection is maintained throughout the entire session?"
+        },
+        "options": [
+            { "vi": "Kết nối dữ liệu", "en": "The data connection" },
+            { "vi": "Kết nối điều khiển", "en": "The control connection" },
+            { "vi": "Cả hai", "en": "Both" },
+            { "vi": "Không có kết nối nào", "en": "Neither connection" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Kết nối điều khiển (control) giống như một cuộc điện thoại mở liên tục để bạn ra lệnh. Kết nối dữ liệu (data) chỉ được mở khi có file cần chuyển và đóng lại ngay sau đó.",
+            "en": "The control connection is like an open phone line for you to give commands. The data connection is only opened when a file needs to be transferred and is closed right after."
+        }
+    },
+    {
+        "id": 44,
+        "question": {
+            "vi": "Trong kiến trúc email, 'UA' là viết tắt của gì?",
+            "en": "In the email architecture, what does 'UA' stand for?"
+        },
+        "options": [
+            { "vi": "User Address", "en": "User Address" },
+            { "vi": "User Agent", "en": "User Agent" },
+            { "vi": "Universal Access", "en": "Universal Access" },
+            { "vi": "User Authority", "en": "User Authority" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "User Agent (Tác nhân người dùng) chính là chương trình email bạn dùng như Outlook, Gmail, Apple Mail. Nó là 'đại diện' cho bạn trong hệ thống email.",
+            "en": "The User Agent is the email program you use, like Outlook, Gmail, or Apple Mail. It is your 'agent' in the email system."
+        }
+    },
+    {
+        "id": 45,
+        "question": {
+            "vi": "Tác nhân nào chịu trách nhiệm chuyển email từ máy chủ mail của người gửi đến máy chủ mail của người nhận qua Internet?",
+            "en": "Which agent is responsible for transferring email from the sender's mail server to the receiver's mail server over the Internet?"
+        },
+        "options": [
+            { "vi": "User Agent (UA)", "en": "User Agent (UA)" },
+            { "vi": "Message Transfer Agent (MTA)", "en": "Message Transfer Agent (MTA)" },
+            { "vi": "Message Access Agent (MAA)", "en": "Message Access Agent (MAA)" },
+            { "vi": "Mail Server (MS)", "en": "Mail Server (MS)" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "MTA (Tác nhân chuyển thư) hoạt động như 'người đưa thư' của bưu điện, có nhiệm vụ vận chuyển thư từ bưu cục này (mail server) đến bưu cục khác.",
+            "en": "The MTA (Message Transfer Agent) acts like the post office's 'mail carrier,' responsible for transporting mail from one post office (mail server) to another."
+        }
+    },
+    {
+        "id": 46,
+        "question": {
+            "vi": "Tại sao người dùng cuối (như Bob) cần MAA (ví dụ POP3, IMAP) để đọc email?",
+            "en": "Why does an end user (like Bob) need an MAA (e.g., POP3, IMAP) to read email?"
+        },
+        "options": [
+            { "vi": "Vì MTA là một giao thức 'push', còn Bob cần một giao thức 'pull' để lấy mail về", "en": "Because MTA is a 'push' protocol, and Bob needs a 'pull' protocol to retrieve mail" },
+            { "vi": "Vì MTA không an toàn", "en": "Because MTA is not secure" },
+            { "vi": "Vì UA không tương thích với MTA", "en": "Because UA is not compatible with MTA" },
+            { "vi": "Vì MTA chỉ dùng để gửi, không dùng để nhận", "en": "Because MTA is only for sending, not receiving" }
+        ],
+        "correctAnswerIndex": 0,
+        "tip": {
+            "vi": "MTA (SMTP) 'đẩy' (push) thư đến hòm thư của bạn. Để đọc, bạn cần 'kéo' (pull) thư từ hòm thư về máy mình. MAA (POP3/IMAP) làm nhiệm vụ 'kéo' đó.",
+            "en": "MTA (SMTP) 'pushes' mail to your mailbox. To read it, you need to 'pull' the mail from the mailbox to your device. MAA (POP3/IMAP) performs that 'pull' action."
+        }
+    },
+    {
+        "id": 47,
+        "question": {
+            "vi": "Tại sao giao thức SSH được ưa chuộng hơn TELNET cho việc đăng nhập từ xa?",
+            "en": "Why is the SSH protocol preferred over TELNET for remote login?"
+        },
+        "options": [
+            { "vi": "SSH nhanh hơn", "en": "SSH is faster" },
+            { "vi": "SSH gửi dữ liệu, bao gồm cả mật khẩu, ở dạng mã hóa (encrypted)", "en": "SSH sends data, including the password, in an encrypted form" },
+            { "vi": "SSH dễ sử dụng hơn", "en": "SSH is easier to use" },
+            { "vi": "TELNET đã lỗi thời và không còn hoạt động", "en": "TELNET is obsolete and no longer works" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "TELNET gửi mọi thứ dưới dạng 'văn bản thuần túy' (plaintext), ai cũng có thể đọc trộm. SSH (Secure Shell) mã hóa mọi thứ, giống như gửi thư trong một chiếc hộp khóa an toàn.",
+            "en": "TELNET sends everything as 'plaintext,' which anyone can eavesdrop on. SSH (Secure Shell) encrypts everything, like sending a letter in a secure lockbox."
+        }
+    },
+    {
+        "id": 48,
+        "question": {
+            "vi": "Dịch vụ chia sẻ nhạc nào đã làm cho mô hình P2P trở nên cực kỳ phổ biến vào khoảng năm 1999-2001?",
+            "en": "Which music sharing service made the P2P model extremely popular around 1999-2001?"
+        },
+        "options": [
+            { "vi": "Gnutella", "en": "Gnutella" },
+            { "vi": "BitTorrent", "en": "BitTorrent" },
+            { "vi": "Napster", "en": "Napster" },
+            { "vi": "Kazaa", "en": "Kazaa" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Napster là cái tên tiên phong và gây chấn động trong lĩnh vực chia sẻ nhạc P2P, mở đường cho các dịch vụ sau này.",
+            "en": "Napster was the pioneering and sensational name in P2P music sharing, paving the way for later services."
+        }
+    },
+    {
+        "id": 49,
+        "question": {
+            "vi": "Nhược điểm chính của mạng P2P tập trung (centralized P2P) như Napster là gì?",
+            "en": "What is the main drawback of a centralized P2P network like Napster?"
+        },
+        "options": [
+            { "vi": "Rất khó tìm kiếm file", "en": "It's very hard to search for files" },
+            { "vi": "Máy chủ trung tâm dễ bị tấn công và là điểm yếu duy nhất (single point of failure)", "en": "The central server is vulnerable to attack and is a single point of failure" },
+            { "vi": "Tốc độ tải xuống rất chậm", "en": "The download speed is very slow" },
+            { "vi": "Không thể chia sẻ file lớn", "en": "Large files cannot be shared" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Mọi hoạt động tìm kiếm đều phụ thuộc vào máy chủ trung tâm. Nếu máy chủ này 'sập', toàn bộ mạng sẽ tê liệt. Đây cũng là lý do pháp lý khiến Napster phải đóng cửa.",
+            "en": "All search operations depend on the central server. If this server goes down, the entire network is paralyzed. This was also the legal reason Napster was shut down."
+        }
+    },
+    {
+        "id": 50,
+        "question": {
+            "vi": "WWW là viết tắt của cụm từ nào?",
+            "en": "What does WWW stand for?"
+        },
+        "options": [
+            { "vi": "Wide World Web", "en": "Wide World Web" },
+            { "vi": "World Wide Web", "en": "World Wide Web" },
+            { "vi": "Web World Wide", "en": "Web World Wide" },
+            { "vi": "Western World Web", "en": "Western World Web" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "World Wide Web - Mạng Lưới Toàn Cầu. Một cái tên rất kêu!",
+            "en": "World Wide Web - A very catchy name!"
+        }
+    },
+    {
+        "id": 51,
+        "question": {
+            "vi": "'Hypertext' ban đầu dùng để chỉ các tài liệu văn bản được liên kết. Ngày nay, thuật ngữ này đã phát triển thành 'hypermedia' để bao gồm cả...?",
+            "en": "'Hypertext' originally referred to linked text documents. Today, the term has evolved into 'hypermedia' to also include...?"
+        },
+        "options": [
+            { "vi": "Chỉ hình ảnh", "en": "Only images" },
+            { "vi": "Chỉ video", "en": "Only video" },
+            { "vi": "Hình ảnh, âm thanh, video và các tệp khác", "en": "Images, audio, video, and other files" },
+            { "vi": "Các trang web phức tạp hơn", "en": "More complex websites" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Hypermedia = Hyper + Media. 'Media' (phương tiện) bao gồm tất cả các dạng nội dung đa phương tiện, không chỉ là text.",
+            "en": "Hypermedia = Hyper + Media. 'Media' includes all forms of multimedia content, not just text."
+        }
+    },
+    {
+        "id": 52,
+        "question": {
+            "vi": "Trình duyệt web (browser) như Chrome, Firefox đóng vai trò gì trong mô hình client-server?",
+            "en": "What role does a web browser like Chrome or Firefox play in the client-server model?"
+        },
+        "options": [
+            { "vi": "Server", "en": "Server" },
+            { "vi": "Client", "en": "Client" },
+            { "vi": "Cả hai", "en": "Both" },
+            { "vi": "Một thiết bị trung gian", "en": "An intermediary device" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Trình duyệt là chương trình client, nó gửi yêu cầu đến web server để lấy nội dung trang web về hiển thị cho bạn.",
+            "en": "The browser is a client program; it sends requests to a web server to fetch web page content to display to you."
+        }
+    },
+    {
+        "id": 53,
+        "question": {
+            "vi": "Trong DNS, '.com', '.edu', '.gov' thuộc loại domain nào?",
+            "en": "In DNS, what type of domains are '.com', '.edu', '.gov'?"
+        },
+        "options": [
+            { "vi": "Country domains", "en": "Country domains" },
+            { "vi": "Generic domains", "en": "Generic domains" },
+            { "vi": "Inverse domains", "en": "Inverse domains" },
+            { "vi": "Protocol domains", "en": "Protocol domains" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Đây là các tên miền cấp cao chung (generic top-level domains - gTLD), mô tả loại hình tổ chức: com=commercial, edu=education, gov=government.",
+            "en": "These are generic top-level domains (gTLDs), describing the type of organization: com=commercial, edu=education, gov=government."
+        }
+    },
+    {
+        "id": 54,
+        "question": {
+            "vi": "Tên miền 'fpt.edu.vn' được đọc như thế nào trong hệ thống phân cấp DNS?",
+            "en": "How is the domain name 'fpt.edu.vn' read in the DNS hierarchy?"
+        },
+        "options": [
+            { "vi": "Từ trái sang phải (fpt -> edu -> vn)", "en": "From left to right (fpt -> edu -> vn)" },
+            { "vi": "Từ phải sang trái (vn -> edu -> fpt)", "en": "From right to left (vn -> edu -> fpt)" },
+            { "vi": "Không theo thứ tự nào", "en": "In no particular order" },
+            { "vi": "Theo thứ tự bảng chữ cái", "en": "In alphabetical order" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Hệ thống DNS có cấu trúc hình cây, gốc ở bên phải. Do đó, nó đọc từ cấp cao nhất (vn) đến cấp thấp hơn (edu) rồi đến (fpt).",
+            "en": "The DNS system has a tree structure with the root on the right. Therefore, it reads from the top level (vn) to the lower level (edu) and then to (fpt)."
+        }
+    },
+    {
+        "id": 55,
+        "question": {
+            "vi": "Mạng P2P phi tập trung (decentralized P2P) không phụ thuộc vào...",
+            "en": "A decentralized P2P network does not depend on..."
+        },
+        "options": [
+            { "vi": "Các peer", "en": "The peers" },
+            { "vi": "Một máy chủ thư mục trung tâm", "en": "A central directory server" },
+            { "vi": "Kết nối Internet", "en": "An Internet connection" },
+            { "vi": "Giao thức IP", "en": "The IP protocol" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Phi tập trung (decentralized) có nghĩa là không có điểm trung tâm. Các peer tự tìm kiếm và kết nối với nhau.",
+            "en": "Decentralized means there is no central point. Peers find and connect to each other on their own."
+        }
+    },
+    {
+        "id": 56,
+        "question": {
+            "vi": "HTTP server thường lắng nghe yêu cầu ở cổng (port) nào?",
+            "en": "An HTTP server typically listens for requests on which port?"
+        },
+        "options": [
+            { "vi": "21", "en": "21" },
+            { "vi": "25", "en": "25" },
+            { "vi": "53", "en": "53" },
+            { "vi": "80", "en": "80" }
+        ],
+        "correctAnswerIndex": 3,
+        "tip": {
+            "vi": "Các cổng phổ biến: 80 (HTTP), 443 (HTTPS), 21 (FTP), 25 (SMTP), 53 (DNS). Đây là những con số 'well-known' nên nhớ.",
+            "en": "Common ports: 80 (HTTP), 443 (HTTPS), 21 (FTP), 25 (SMTP), 53 (DNS). These are 'well-known' numbers worth remembering."
+        }
+    },
+    {
+        "id": 57,
+        "question": {
+            "vi": "Khi bạn nhận được email, ứng dụng email của bạn (như Outlook, Gmail) hoạt động như một...?",
+            "en": "When you receive an email, your email application (like Outlook, Gmail) acts as a...?"
+        },
+        "options": [
+            { "vi": "MTA client", "en": "MTA client" },
+            { "vi": "MTA server", "en": "MTA server" },
+            { "vi": "User Agent (UA)", "en": "User Agent (UA)" },
+            { "vi": "DNS client", "en": "DNS client" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "User Agent (UA) là chương trình mà người dùng cuối tương tác để soạn, gửi và đọc email.",
+            "en": "The User Agent (UA) is the program the end user interacts with to compose, send, and read email."
+        }
+    },
+    {
+        "id": 58,
+        "question": {
+            "vi": "Giao thức nào cho phép bạn quản lý email trực tiếp trên máy chủ mà không cần tải chúng về máy?",
+            "en": "Which protocol allows you to manage emails directly on the server without downloading them to your machine?"
+        },
+        "options": [
+            { "vi": "POP3", "en": "POP3" },
+            { "vi": "IMAP", "en": "IMAP" },
+            { "vi": "SMTP", "en": "SMTP" },
+            { "vi": "HTTP", "en": "HTTP" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "IMAP (Internet Message Access Protocol) đồng bộ hóa email trên nhiều thiết bị. POP3 thường tải về và xóa khỏi server. SMTP chỉ dùng để gửi.",
+            "en": "IMAP (Internet Message Access Protocol) synchronizes email across multiple devices. POP3 typically downloads and deletes from the server. SMTP is only for sending."
+        }
+    },
+    {
+        "id": 59,
+        "question": {
+            "vi": "Vấn đề lớn nhất với mô hình client-server khi có quá nhiều client truy cập cùng lúc là gì?",
+            "en": "What is the biggest problem with the client-server model when too many clients access it simultaneously?"
+        },
+        "options": [
+            { "vi": "Client bị quá tải", "en": "The clients get overloaded" },
+            { "vi": "Server có thể bị quá tải (overwhelmed)", "en": "The server can become overwhelmed" },
+            { "vi": "Mạng bị nghẽn", "en": "The network gets congested" },
+            { "vi": "Không có vấn đề gì", "en": "There is no problem" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Tất cả yêu cầu đều đổ dồn về một server duy nhất. Đến một giới hạn, nó sẽ không thể xử lý kịp, giống như một quầy phục vụ có quá nhiều khách hàng.",
+            "en": "All requests are funneled to a single server. At a certain limit, it can't handle the load, like a service counter with too many customers."
+        }
+    },
+    {
+        "id": 60,
+        "question": {
+            "vi": "Gnutella và Freenet là ví dụ của loại mạng P2P nào?",
+            "en": "Gnutella and Freenet are examples of which type of P2P network?"
+        },
+        "options": [
+            { "vi": "Centralized", "en": "Centralized" },
+            { "vi": "Hybrid", "en": "Hybrid" },
+            { "vi": "Unstructured Decentralized", "en": "Unstructured Decentralized" },
+            { "vi": "Structured Decentralized", "en": "Structured Decentralized" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Chúng là mạng phi tập trung và 'vô cấu trúc' (unstructured), nghĩa là các node kết nối với nhau một cách ngẫu nhiên, không theo một quy luật cụ thể nào.",
+            "en": "They are decentralized and 'unstructured' networks, meaning nodes connect to each other randomly, without any specific rules."
+        }
+    },
+    {
+        "id": 61,
+        "question": {
+            "vi": "Chức năng chính của port number là gì?",
+            "en": "What is the main function of a port number?"
+        },
+        "options": [
+            { "vi": "Để xác định một máy tính trên mạng", "en": "To identify a computer on the network" },
+            { "vi": "Để xác định một mạng cụ thể", "en": "To identify a specific network" },
+            { "vi": "Để phân biệt giữa các chương trình ứng dụng khác nhau đang chạy trên cùng một máy chủ", "en": "To distinguish between different application programs running on the same host" },
+            { "vi": "Để kiểm tra lỗi dữ liệu", "en": "To check for data errors" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Port number là 'số phòng' của ứng dụng. Máy tính là 'tòa nhà' (địa chỉ IP), còn port number chỉ đến đúng ứng dụng (trình duyệt, game, email...) bạn muốn giao tiếp.",
+            "en": "A port number is the 'room number' for an application. The computer is the 'building' (IP address), and the port number points to the specific application (browser, game, email...) you want to communicate with."
+        }
+    },
+    {
+        "id": 62,
+        "question": {
+            "vi": "Các port number từ 0 đến 1023 được gọi là gì?",
+            "en": "What are port numbers from 0 to 1023 called?"
+        },
+        "options": [
+            { "vi": "Ephemeral port numbers", "en": "Ephemeral port numbers" },
+            { "vi": "Well-known port numbers", "en": "Well-known port numbers" },
+            { "vi": "Dynamic port numbers", "en": "Dynamic port numbers" },
+            { "vi": "Private port numbers", "en": "Private port numbers" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Đây là các cổng 'nổi tiếng' (well-known), được dành riêng cho các dịch vụ phổ biến (HTTP=80, FTP=21, ...).",
+            "en": "These are 'well-known' ports, reserved for popular services (HTTP=80, FTP=21, ...)."
+        }
+    },
+    {
+        "id": 63,
+        "question": {
+            "vi": "Khi một client (ví dụ: trình duyệt web) kết nối đến server, nó sẽ sử dụng một port number tạm thời. Port này được gọi là gì?",
+            "en": "When a client (e.g., a web browser) connects to a server, it uses a temporary port number. What is this port called?"
+        },
+        "options": [
+            { "vi": "Well-known port number", "en": "Well-known port number" },
+            { "vi": "Ephemeral port number", "en": "Ephemeral port number" },
+            { "vi": "Server port number", "en": "Server port number" },
+            { "vi": "Static port number", "en": "Static port number" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Ephemeral có nghĩa là 'phù du', 'tạm thời'. Client chỉ cần một port ngẫu nhiên, tồn tại trong thời gian ngắn để nhận phản hồi từ server.",
+            "en": "Ephemeral means 'short-lived' or 'temporary.' The client just needs a random port that exists for a short time to receive the server's response."
+        }
+    },
+    {
+        "id": 64,
+        "question": {
+            "vi": "Giao thức nào sau đây là 'connectionless' và 'unreliable'?",
+            "en": "Which of the following protocols is 'connectionless' and 'unreliable'?"
+        },
+        "options": [
+            { "vi": "TCP", "en": "TCP" },
+            { "vi": "UDP", "en": "UDP" },
+            { "vi": "IP", "en": "IP" },
+            { "vi": "HTTP", "en": "HTTP" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "UDP (User Datagram Protocol) giống như gửi bưu thiếp: nhanh, không cần xác nhận, nhưng có thể bị thất lạc. TCP giống như gửi thư bảo đảm.",
+            "en": "UDP (User Datagram Protocol) is like sending a postcard: fast, no confirmation required, but it might get lost. TCP is like sending a registered letter."
+        }
+    },
+    {
+        "id": 65,
+        "question": {
+            "vi": "Bạn đang phát triển một ứng dụng gọi video trực tuyến, nơi tốc độ là quan trọng nhất và việc mất một vài khung hình nhỏ là chấp nhận được. Bạn nên chọn giao thức nào ở tầng Transport?",
+            "en": "You are developing a live video streaming application where speed is paramount and losing a few minor frames is acceptable. Which Transport layer protocol should you choose?"
+        },
+        "options": [
+            { "vi": "TCP", "en": "TCP" },
+            { "vi": "UDP", "en": "UDP" },
+            { "vi": "Cả hai", "en": "Both" },
+            { "vi": "Không dùng giao thức nào", "en": "No protocol" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Đối với video streaming, thà xem hình ảnh bị giật một chút còn hơn là phải chờ TCP gửi lại gói tin bị mất, gây đứng hình. Do đó, UDP là lựa chọn tốt hơn.",
+            "en": "For video streaming, it's better to have slightly choppy video than to wait for TCP to retransmit a lost packet, which causes freezing. Therefore, UDP is the better choice."
+        }
+    },
+    {
+        "id": 66,
+        "question": {
+            "vi": "Giao thức nào thiết lập một kết nối 3 bước (three-way handshake) trước khi truyền dữ liệu?",
+            "en": "Which protocol establishes a three-way handshake before transmitting data?"
+        },
+        "options": [
+            { "vi": "UDP", "en": "UDP" },
+            { "vi": "IP", "en": "IP" },
+            { "vi": "TCP", "en": "TCP" },
+            { "vi": "ARP", "en": "ARP" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "TCP rất cẩn thận. Nó thực hiện một cuộc 'bắt tay ba bước' (SYN, SYN-ACK, ACK) để chắc chắn cả hai bên đều sẵn sàng trước khi bắt đầu gửi dữ liệu.",
+            "en": "TCP is very careful. It performs a 'three-way handshake' (SYN, SYN-ACK, ACK) to ensure both sides are ready before starting data transmission."
+        }
+    },
+    {
+        "id": 67,
+        "question": {
+            "vi": "Header của một User Datagram (UDP) có kích thước cố định là bao nhiêu?",
+            "en": "What is the fixed header size of a User Datagram (UDP)?"
+        },
+        "options": [
+            { "vi": "8 bytes", "en": "8 bytes" },
+            { "vi": "16 bytes", "en": "16 bytes" },
+            { "vi": "20 bytes", "en": "20 bytes" },
+            { "vi": "60 bytes", "en": "60 bytes" }
+        ],
+        "correctAnswerIndex": 0,
+        "tip": {
+            "vi": "UDP rất tối giản, header của nó chỉ có 8 bytes, chứa thông tin cơ bản nhất (port nguồn, port đích, độ dài, checksum).",
+            "en": "UDP is very minimalistic; its header is only 8 bytes, containing the most basic information (source port, destination port, length, checksum)."
+        }
+    },
+    {
+        "id": 68,
+        "question": {
+            "vi": "Giao thức nào cung cấp cơ chế kiểm soát luồng (flow control) để tránh làm ngập lụt bên nhận?",
+            "en": "Which protocol provides a flow control mechanism to avoid overwhelming the receiver?"
+        },
+        "options": [
+            { "vi": "UDP", "en": "UDP" },
+            { "vi": "TCP", "en": "TCP" },
+            { "vi": "IP", "en": "IP" },
+            { "vi": "Ethernet", "en": "Ethernet" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "TCP có 'flow control', nó điều chỉnh tốc độ gửi để phù hợp với khả năng nhận của đối phương, giống như điều chỉnh tốc độ nói để người nghe kịp hiểu.",
+            "en": "TCP has 'flow control'; it adjusts the sending rate to match the receiver's capacity, like adjusting your speaking speed so the listener can keep up."
+        }
+    },
+    {
+        "id": 69,
+        "question": {
+            "vi": "'Connection-oriented service' trong TCP có nghĩa là gì?",
+            "en": "What does 'Connection-oriented service' in TCP mean?"
+        },
+        "options": [
+            { "vi": "Có một kết nối vật lý giữa hai máy", "en": "There is a physical connection between the two machines" },
+            { "vi": "Tất cả các segment của cùng một message có mối quan hệ với nhau và được đánh số thứ tự", "en": "All segments of the same message are related and are sequence numbered" },
+            { "vi": "Tốc độ kết nối rất nhanh", "en": "The connection speed is very fast" },
+            { "vi": "Chỉ dùng cho mạng có dây", "en": "It's only for wired networks" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Hướng kết nối (Connection-oriented) không phải là kết nối vật lý, mà là một 'mối quan hệ' logic được thiết lập. TCP coi dòng dữ liệu là một chuỗi liên tục, không phải các gói rời rạc.",
+            "en": "Connection-oriented is not a physical connection, but a logical 'relationship' that is established. TCP treats the data stream as a continuous sequence, not as discrete packets."
+        }
+    },
+    {
+        "id": 70,
+        "question": {
+            "vi": "Tại sao UDP nhanh hơn TCP?",
+            "en": "Why is UDP faster than TCP?"
+        },
+        "options": [
+            { "vi": "Vì nó sử dụng cáp quang", "en": "Because it uses fiber optics" },
+            { "vi": "Vì nó có header đơn giản và không có các thủ tục kiểm tra, xác nhận phức tạp", "en": "Because it has a simple header and no complex checking and acknowledgment procedures" },
+            { "vi": "Vì nó nén dữ liệu tốt hơn", "en": "Because it compresses data better" },
+            { "vi": "Vì nó được ưu tiên bởi các router", "en": "Because it is prioritized by routers" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "UDP không tốn thời gian cho việc 'bắt tay', báo nhận, kiểm soát luồng... Nó chỉ đơn giản là 'gửi và quên', nên tốc độ nhanh hơn nhiều.",
+            "en": "UDP doesn't waste time on handshakes, acknowledgments, flow control... It simply 'sends and forgets,' so it's much faster."
+        }
+    },
+    {
+        "id": 71,
+        "question": {
+            "vi": "Port number 13 được dành riêng cho dịch vụ nào?",
+            "en": "Port number 13 is reserved for which service?"
+        },
+        "options": [
+            { "vi": "FTP", "en": "FTP" },
+            { "vi": "Daytime", "en": "Daytime" },
+            { "vi": "DNS", "en": "DNS" },
+            { "vi": "HTTP", "en": "HTTP" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Dịch vụ Daytime là một dịch vụ đơn giản trả về ngày giờ hiện tại. Một ví dụ kinh điển trong sách giáo khoa mạng.",
+            "en": "The Daytime service is a simple service that returns the current date and time. A classic example in networking textbooks."
+        }
+    },
+    {
+        "id": 72,
+        "question": {
+            "vi": "Tổng chiều dài tối đa của một User Datagram (bao gồm header và data) được giới hạn bởi trường nào trong IP header?",
+            "en": "The maximum total length of a User Datagram (including header and data) is limited by which field in the IP header?"
+        },
+        "options": [
+            { "vi": "65,535 bytes", "en": "65,535 bytes" },
+            { "vi": "1500 bytes", "en": "1500 bytes" },
+            { "vi": "8 bytes", "en": "8 bytes" },
+            { "vi": "576 bytes", "en": "576 bytes" }
+        ],
+        "correctAnswerIndex": 0,
+        "tip": {
+            "vi": "Một UDP datagram được đóng gói bên trong một IP datagram. Trường 'Total Length' trong IP header dài 16 bit, cho phép giá trị tối đa là 2^16 - 1 = 65,535.",
+            "en": "A UDP datagram is encapsulated inside an IP datagram. The 'Total Length' field in the IP header is 16 bits, allowing a maximum value of 2^16 - 1 = 65,535."
+        }
+    },
+    {
+        "id": 73,
+        "question": {
+            "vi": "TCP sử dụng cái gì để đảm bảo các segment được sắp xếp đúng thứ tự ở bên nhận?",
+            "en": "What does TCP use to ensure segments are reassembled in the correct order at the receiver?"
+        },
+        "options": [
+            { "vi": "Port numbers", "en": "Port numbers" },
+            { "vi": "Sequence numbers", "en": "Sequence numbers" },
+            { "vi": "IP addresses", "en": "IP addresses" },
+            { "vi": "Checksums", "en": "Checksums" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Sequence number (số thứ tự) hoạt động giống như việc bạn đánh số trang cho một tập tài liệu. Dù các trang có bị xáo trộn, người nhận vẫn có thể sắp xếp lại đúng.",
+            "en": "Sequence numbers work like page numbers for a document. Even if the pages get shuffled, the receiver can still put them back in the correct order."
+        }
+    },
+    {
+        "id": 74,
+        "question": {
+            "vi": "Nếu một segment TCP bị mất trên đường truyền, điều gì sẽ xảy ra?",
+            "en": "If a TCP segment is lost in transit, what happens?"
+        },
+        "options": [
+            { "vi": "Toàn bộ thông điệp sẽ bị hủy", "en": "The entire message will be discarded" },
+            { "vi": "Bên nhận sẽ yêu cầu bên gửi truyền lại segment bị mất đó", "en": "The receiver will request the sender to retransmit the lost segment" },
+            { "vi": "Bên nhận sẽ bỏ qua segment đó và tiếp tục xử lý", "en": "The receiver will ignore that segment and continue processing" },
+            { "vi": "Ứng dụng sẽ bị treo", "en": "The application will hang" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Đây chính là bản chất 'đáng tin cậy' của TCP. Bên nhận thấy thiếu một số thứ tự và sẽ không gửi ACK cho nó, bên gửi sau một thời gian sẽ tự động gửi lại.",
+            "en": "This is the 'reliable' nature of TCP. The receiver notices a missing sequence number and won't send an ACK for it; the sender will automatically retransmit it after a timeout."
+        }
+    },
+    {
+        "id": 75,
+        "question": {
+            "vi": "DNS thường sử dụng giao thức nào ở tầng Transport cho các truy vấn thông thường?",
+            "en": "Which Transport layer protocol does DNS typically use for standard queries?"
+        },
+        "options": [
+            { "vi": "TCP", "en": "TCP" },
+            { "vi": "UDP", "en": "UDP" },
+            { "vi": "Cả hai", "en": "Both" },
+            { "vi": "Chỉ IP", "en": "Only IP" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Truy vấn DNS là một yêu cầu/phản hồi ngắn. Dùng UDP nhanh và hiệu quả hơn. TCP chỉ được dùng trong các trường hợp đặc biệt như truyền dữ liệu DNS zone lớn.",
+            "en": "A DNS query is a short request/response. Using UDP is faster and more efficient. TCP is only used in special cases like large DNS zone transfers."
+        }
+    },
+    {
+        "id": 76,
+        "question": {
+            "vi": "Giao thức chính ở tầng Network trong bộ TCP/IP là gì?",
+            "en": "What is the main protocol at the Network layer in the TCP/IP suite?"
+        },
+        "options": [
+            { "vi": "TCP", "en": "TCP" },
+            { "vi": "UDP", "en": "UDP" },
+            { "vi": "IP", "en": "IP" },
+            { "vi": "Ethernet", "en": "Ethernet" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Tầng Network còn được gọi là tầng IP. Giao thức chính của nó là IP (Internet Protocol).",
+            "en": "The Network layer is also known as the IP layer. Its main protocol is IP (Internet Protocol)."
+        }
+    },
+    {
+        "id": 77,
+        "question": {
+            "vi": "Giao tiếp ở tầng Network được mô tả là...?",
+            "en": "Communication at the Network layer is described as...?"
+        },
+        "options": [
+            { "vi": "Process-to-process", "en": "Process-to-process" },
+            { "vi": "Host-to-host", "en": "Host-to-host" },
+            { "vi": "Node-to-node", "en": "Node-to-node" },
+            { "vi": "End-to-end", "en": "End-to-end" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Tầng Network lo việc đưa gói tin từ máy tính nguồn đến máy tính đích (host-to-host). Tầng Transport lo việc đưa đến đúng ứng dụng (process-to-process) trên máy đích đó.",
+            "en": "The Network layer handles getting the packet from the source computer to the destination computer (host-to-host). The Transport layer handles getting it to the right application (process-to-process) on that destination host."
+        }
+    },
+    {
+        "id": 78,
+        "question": {
+            "vi": "Một địa chỉ IPv4 có bao nhiêu bit?",
+            "en": "How many bits does an IPv4 address have?"
+        },
+        "options": [
+            { "vi": "16 bits", "en": "16 bits" },
+            { "vi": "32 bits", "en": "32 bits" },
+            { "vi": "64 bits", "en": "64 bits" },
+            { "vi": "128 bits", "en": "128 bits" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "IPv4 có 4 cụm số, mỗi cụm là 8 bit (1 byte). 4 x 8 = 32 bit.",
+            "en": "IPv4 has 4 number blocks, each block is 8 bits (1 byte). 4 x 8 = 32 bits."
+        }
+    },
+    {
+        "id": 79,
+        "question": {
+            "vi": "Một địa chỉ IPv6 có bao nhiêu bit?",
+            "en": "How many bits does an IPv6 address have?"
+        },
+        "options": [
+            { "vi": "32 bits", "en": "32 bits" },
+            { "vi": "48 bits", "en": "48 bits" },
+            { "vi": "64 bits", "en": "64 bits" },
+            { "vi": "128 bits", "en": "128 bits" }
+        ],
+        "correctAnswerIndex": 3,
+        "tip": {
+            "vi": "IPv6 là một bước nhảy vọt, tăng từ 32 bit lên 128 bit để cung cấp một không gian địa chỉ gần như vô hạn.",
+            "en": "IPv6 is a huge leap, increasing from 32 bits to 128 bits to provide a nearly infinite address space."
+        }
+    },
+    {
+        "id": 80,
+        "question": {
+            "vi": "Cách biểu diễn địa chỉ IPv4 '129.3.7.30' được gọi là gì?",
+            "en": "What is the representation format of the IPv4 address '129.3.7.30' called?"
+        },
+        "options": [
+            { "vi": "Binary notation", "en": "Binary notation" },
+            { "vi": "Dotted-decimal notation", "en": "Dotted-decimal notation" },
+            { "vi": "Hexadecimal notation", "en": "Hexadecimal notation" },
+            { "vi": "Colon-hexadecimal notation", "en": "Colon-hexadecimal notation" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Dotted-decimal: các số thập phân (decimal) được ngăn cách bởi dấu chấm (dot).",
+            "en": "Dotted-decimal: decimal numbers separated by dots."
+        }
+    },
+    {
+        "id": 81,
+        "question": {
+            "vi": "Địa chỉ IP được chia thành hai phần, đó là gì?",
+            "en": "An IP address is divided into two parts, what are they?"
+        },
+        "options": [
+            { "vi": "Prefix và Suffix", "en": "Prefix and Suffix" },
+            { "vi": "Host và Port", "en": "Host and Port" },
+            { "vi": "Network và Node", "en": "Network and Node" },
+            { "vi": "A và C đều đúng", "en": "Both A and C are correct" }
+        ],
+        "correctAnswerIndex": 3,
+        "tip": {
+            "vi": "Phần đầu (Prefix) xác định mạng, phần cuối (Suffix) xác định thiết bị (node/host) trong mạng đó. Cả hai cách gọi đều đúng.",
+            "en": "The first part (Prefix) identifies the network, and the last part (Suffix) identifies the device (node/host) within that network. Both terminologies are correct."
+        }
+    },
+    {
+        "id": 82,
+        "question": {
+            "vi": "Dịch vụ của tầng Network (IP) là...?",
+            "en": "The service of the Network layer (IP) is...?"
+        },
+        "options": [
+            { "vi": "Tin cậy và hướng kết nối", "en": "Reliable and connection-oriented" },
+            { "vi": "Không tin cậy và không kết nối", "en": "Unreliable and connectionless" },
+            { "vi": "Tin cậy và không kết nối", "en": "Reliable and connectionless" },
+            { "vi": "Không tin cậy và hướng kết nối", "en": "Unreliable and connection-oriented" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Tầng IP cung cấp dịch vụ 'best-effort' (nỗ lực tối đa), không đảm bảo bất cứ điều gì. Sự tin cậy là nhiệm vụ của tầng Transport (TCP) ở trên.",
+            "en": "The IP layer provides a 'best-effort' service, guaranteeing nothing. Reliability is the job of the Transport layer (TCP) above it."
+        }
+    },
+    {
+        "id": 83,
+        "question": {
+            "vi": "Nếu một gói tin ở tầng Transport quá lớn, tầng Network có thể làm gì?",
+            "en": "If a Transport layer packet is too large, what can the Network layer do?"
+        },
+        "options": [
+            { "vi": "Bỏ gói tin", "en": "Drop the packet" },
+            { "vi": "Yêu cầu gửi lại gói tin nhỏ hơn", "en": "Request a smaller packet to be resent" },
+            { "vi": "Phân mảnh (fragment) gói tin thành nhiều datagram nhỏ hơn", "en": "Fragment the packet into smaller datagrams" },
+            { "vi": "Nén gói tin lại", "en": "Compress the packet" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Mỗi mạng có một kích thước gói tin tối đa (MTU). Nếu gói tin lớn hơn MTU, tầng IP sẽ 'chặt' nó ra thành nhiều mảnh (fragment) để gửi đi.",
+            "en": "Each network has a Maximum Transmission Unit (MTU). If a packet is larger than the MTU, the IP layer will 'chop' it into multiple fragments to send."
+        }
+    },
+    {
+        "id": 84,
+        "question": {
+            "vi": "Tại sao thế giới cần chuyển từ IPv4 sang IPv6?",
+            "en": "Why does the world need to transition from IPv4 to IPv6?"
+        },
+        "options": [
+            { "vi": "IPv6 nhanh hơn nhiều", "en": "IPv6 is much faster" },
+            { "vi": "IPv4 đã cạn kiệt không gian địa chỉ", "en": "IPv4 has run out of address space" },
+            { "vi": "IPv6 an toàn hơn", "en": "IPv6 is more secure" },
+            { "vi": "IPv4 quá phức tạp", "en": "IPv4 is too complex" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Lý do chính và cấp bách nhất là IPv4 chỉ có khoảng 4.3 tỷ địa chỉ, không đủ cho số lượng thiết bị kết nối Internet ngày càng tăng.",
+            "en": "The main and most urgent reason is that IPv4 only has about 4.3 billion addresses, which is not enough for the growing number of Internet-connected devices."
+        }
+    },
+    {
+        "id": 85,
+        "question": {
+            "vi": "Trong địa chỉ IPv4, mỗi số trong dạng dotted-decimal có giá trị từ 0 đến bao nhiêu?",
+            "en": "In an IPv4 address, what is the value range for each number in the dotted-decimal notation?"
+        },
+        "options": [
+            { "vi": "127", "en": "127" },
+            { "vi": "255", "en": "255" },
+            { "vi": "512", "en": "512" },
+            { "vi": "1023", "en": "1023" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Mỗi số đại diện cho 8 bit. Giá trị nhỏ nhất là 00000000 (0), lớn nhất là 11111111 (255).",
+            "en": "Each number represents 8 bits. The minimum value is 00000000 (0), and the maximum is 11111111 (255)."
+        }
+    },
+    {
+        "id": 86,
+        "question": {
+            "vi": "Giao tiếp ở tầng Data-Link được mô tả là...?",
+            "en": "Communication at the Data-Link layer is described as...?"
+        },
+        "options": [
+            { "vi": "Process-to-process", "en": "Process-to-process" },
+            { "vi": "Host-to-host", "en": "Host-to-host" },
+            { "vi": "Node-to-node", "en": "Node-to-node" },
+            { "vi": "World-to-world", "en": "World-to-world" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Tầng Data-Link chỉ quan tâm đến việc đưa dữ liệu qua một chặng (link) duy nhất, từ một nút (node) này đến nút kế tiếp, ví dụ từ PC của bạn đến router.",
+            "en": "The Data-Link layer only cares about getting data across a single hop (link), from one node to the next, e.g., from your PC to the router."
+        }
+    },
+    {
+        "id": 87,
+        "question": {
+            "vi": "Các host và router trong đường truyền được gọi chung là gì?",
+            "en": "What are the hosts and routers along a transmission path collectively called?"
+        },
+        "options": [
+            { "vi": "Links", "en": "Links" },
+            { "vi": "Nodes", "en": "Nodes" },
+            { "vi": "Paths", "en": "Paths" },
+            { "vi": "Segments", "en": "Segments" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Node (nút) là một thuật ngữ chung chỉ một điểm kết nối trong mạng. Link (liên kết) là đường nối giữa các node.",
+            "en": "A Node is a general term for a connection point in a network. A Link is the path connecting the nodes."
+        }
+    },
+    {
+        "id": 88,
+        "question": {
+            "vi": "Công nghệ LAN có dây nào phổ biến nhất hiện nay?",
+            "en": "What is the most popular wired LAN technology today?"
+        },
+        "options": [
+            { "vi": "Token Ring", "en": "Token Ring" },
+            { "vi": "FDDI", "en": "FDDI" },
+            { "vi": "Ethernet", "en": "Ethernet" },
+            { "vi": "ATM", "en": "ATM" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Ethernet đã chiến thắng trong cuộc chiến công nghệ LAN và trở thành tiêu chuẩn de facto ở khắp mọi nơi.",
+            "en": "Ethernet won the LAN technology war and has become the de facto standard everywhere."
+        }
+    },
+    {
+        "id": 89,
+        "question": {
+            "vi": "Tốc độ của 'Fast Ethernet' là bao nhiêu?",
+            "en": "What is the speed of 'Fast Ethernet'?"
+        },
+        "options": [
+            { "vi": "10 Mbps", "en": "10 Mbps" },
+            { "vi": "100 Mbps", "en": "100 Mbps" },
+            { "vi": "1 Gbps (1000 Mbps)", "en": "1 Gbps (1000 Mbps)" },
+            { "vi": "10 Gbps", "en": "10 Gbps" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Thứ tự tốc độ của Ethernet: Standard (10), Fast (100), Gigabit (1000). Cứ nhân 10 lên.",
+            "en": "The order of Ethernet speeds: Standard (10), Fast (100), Gigabit (1000). Just multiply by 10."
+        }
+    },
+    {
+        "id": 90,
+        "question": {
+            "vi": "Địa chỉ MAC có bao nhiêu bit?",
+            "en": "How many bits does a MAC address have?"
+        },
+        "options": [
+            { "vi": "32 bits", "en": "32 bits" },
+            { "vi": "48 bits", "en": "48 bits" },
+            { "vi": "64 bits", "en": "64 bits" },
+            { "vi": "128 bits", "en": "128 bits" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Địa chỉ MAC thường được viết dưới dạng 6 cặp ký tự thập lục phân (ví dụ: 0A-1B-2C-3D-4E-5F). Mỗi cặp là 8 bit. 6 x 8 = 48 bit.",
+            "en": "A MAC address is often written as 6 pairs of hexadecimal characters (e.g., 0A-1B-2C-3D-4E-5F). Each pair is 8 bits. 6 x 8 = 48 bits."
+        }
+    },
+    {
+        "id": 91,
+        "question": {
+            "vi": "Công nghệ mạng không dây nào thường được dùng để kết nối các thiết bị cá nhân (chuột, bàn phím, tai nghe) trong phạm vi rất gần?",
+            "en": "Which wireless network technology is commonly used to connect personal devices (mouse, keyboard, headphones) over a very short range?"
+        },
+        "options": [
+            { "vi": "Wi-Fi", "en": "Wi-Fi" },
+            { "vi": "WiMAX", "en": "WiMAX" },
+            { "vi": "Bluetooth", "en": "Bluetooth" },
+            { "vi": "Cellular", "en": "Cellular" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Bluetooth được thiết kế cho Mạng cá nhân không dây (WPAN - Wireless Personal Area Network), kết nối các thiết bị 'cá nhân' của bạn.",
+            "en": "Bluetooth was designed for Wireless Personal Area Networks (WPAN), connecting your 'personal' devices."
+        }
+    },
+    {
+        "id": 92,
+        "question": {
+            "vi": "Bluetooth tạo ra một mạng ad hoc nhỏ được gọi là gì?",
+            "en": "What is the small ad hoc network created by Bluetooth called?"
+        },
+        "options": [
+            { "vi": "A BSS", "en": "A BSS" },
+            { "vi": "An ESS", "en": "An ESS" },
+            { "vi": "A piconet", "en": "A piconet" },
+            { "vi": "A macronet", "en": "A macronet" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Pico- là tiền tố chỉ sự nhỏ bé (nhỏ hơn cả micro, nano). Piconet là một mạng rất nhỏ được tạo bởi các thiết bị Bluetooth.",
+            "en": "Pico- is a prefix meaning very small (smaller than micro, nano). A Piconet is a very small network created by Bluetooth devices."
+        }
+    },
+    {
+        "id": 93,
+        "question": {
+            "vi": "Công nghệ nào cung cấp truy cập Internet tốc độ cao qua đường dây điện thoại hiện có?",
+            "en": "Which technology provides high-speed Internet access over existing telephone lines?"
+        },
+        "options": [
+            { "vi": "Dial-up", "en": "Dial-up" },
+            { "vi": "DSL", "en": "DSL" },
+            { "vi": "Cable", "en": "Cable" },
+            { "vi": "Satellite", "en": "Satellite" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "DSL (Digital Subscriber Line) là một nâng cấp lớn so với Dial-up, cho phép dùng cả điện thoại và Internet tốc độ cao trên cùng một đường dây.",
+            "en": "DSL (Digital Subscriber Line) is a major upgrade from Dial-up, allowing simultaneous use of the phone and high-speed Internet on the same line."
+        }
+    },
+    {
+        "id": 94,
+        "question": {
+            "vi": "Môi trường truyền dẫn nào sau đây là 'unguided medium'?",
+            "en": "Which of the following transmission media is an 'unguided medium'?"
+        },
+        "options": [
+            { "vi": "Cáp xoắn đôi (Twisted-pair cable)", "en": "Twisted-pair cable" },
+            { "vi": "Cáp quang (Fiber-optic cable)", "en": "Fiber-optic cable" },
+            { "vi": "Sóng Wi-Fi", "en": "Wi-Fi waves" },
+            { "vi": "Cáp đồng trục (Coaxial cable)", "en": "Coaxial cable" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Unguided (không hướng dẫn) có nghĩa là không có đường dẫn vật lý. Sóng Wi-Fi truyền trong không gian tự do.",
+            "en": "Unguided means there is no physical path. Wi-Fi waves travel through free space."
+        }
+    },
+    {
+        "id": 95,
+        "question": {
+            "vi": "Lợi thế lớn nhất của cáp quang là gì?",
+            "en": "What is the biggest advantage of fiber-optic cable?"
+        },
+        "options": [
+            { "vi": "Rẻ tiền", "en": "It is cheap" },
+            { "vi": "Dễ lắp đặt", "en": "It is easy to install" },
+            { "vi": "Băng thông cực lớn và ít bị nhiễu", "en": "Extremely high bandwidth and low interference" },
+            { "vi": "Rất linh hoạt, dễ uốn cong", "en": "It is very flexible and easy to bend" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Cáp quang truyền bằng ánh sáng nên có băng thông (khả năng truyền dữ liệu) vượt trội và không bị ảnh hưởng bởi nhiễu điện từ như cáp đồng.",
+            "en": "Fiber-optic cable transmits using light, so it has superior bandwidth (data-carrying capacity) and is not affected by electromagnetic interference like copper cables."
+        }
+    },
+    {
+        "id": 96,
+        "question": {
+            "vi": "Dữ liệu trong bộ nhớ máy tính là dạng...?",
+            "en": "Data in a computer's memory is in what form?"
+        },
+        "options": [
+            { "vi": "Analog data", "en": "Analog data" },
+            { "vi": "Digital data", "en": "Digital data" },
+            { "vi": "Wave data", "en": "Wave data" },
+            { "vi": "Signal data", "en": "Signal data" }
+        ],
+        "correctAnswerIndex": 1,
+        "tip": {
+            "vi": "Máy tính hoạt động dựa trên các giá trị rời rạc (0 và 1), đó chính là bản chất của dữ liệu số (digital data).",
+            "en": "Computers operate based on discrete values (0s and 1s), which is the essence of digital data."
+        }
+    },
+    {
+        "id": 97,
+        "question": {
+            "vi": "Tầng Physical chuyển đổi 'digital data' thành cái gì để truyền đi?",
+            "en": "The Physical layer converts 'digital data' into what for transmission?"
+        },
+        "options": [
+            { "vi": "Digital signals hoặc Analog signals", "en": "Digital signals or Analog signals" },
+            { "vi": "Frames", "en": "Frames" },
+            { "vi": "Packets", "en": "Packets" },
+            { "vi": "Text", "en": "Text" }
+        ],
+        "correctAnswerIndex": 0,
+        "tip": {
+            "vi": "Tùy thuộc vào công nghệ truyền dẫn, dữ liệu số (bit 0, 1) có thể được biểu diễn bằng tín hiệu số (ví dụ: các mức điện áp khác nhau trên dây Ethernet) hoặc tín hiệu tương tự (ví dụ: điều chế sóng mang trong Wi-Fi).",
+            "en": "Depending on the transmission technology, digital data (bits 0, 1) can be represented by digital signals (e.g., different voltage levels on an Ethernet cable) or analog signals (e.g., modulating a carrier wave in Wi-Fi)."
+        }
+    },
+    {
+        "id": 98,
+        "question": {
+            "vi": "Môi trường truyền dẫn (transmission media) thực chất nằm ở đâu trong mô hình TCP/IP?",
+            "en": "Where is the transmission media actually located in the TCP/IP model?"
+        },
+        "options": [
+            { "vi": "Tầng 1", "en": "Layer 1" },
+            { "vi": "Nằm giữa tầng 1 và tầng 2", "en": "Between Layer 1 and Layer 2" },
+            { "vi": "Bên dưới tầng 1 (có thể coi là tầng 0)", "en": "Below Layer 1 (can be considered Layer 0)" },
+            { "vi": "Tầng 2", "en": "Layer 2" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Môi trường truyền dẫn là thứ vật chất mà tầng Vật lý sử dụng. Nó là nền tảng vật lý, nằm bên dưới cả tầng 1.",
+            "en": "The transmission media is the physical stuff that the Physical layer uses. It's the physical foundation, located below Layer 1."
+        }
+    },
+    {
+        "id": 99,
+        "question": {
+            "vi": "ADSL (Asymmetric DSL) có đặc điểm gì?",
+            "en": "What is a characteristic of ADSL (Asymmetric DSL)?"
+        },
+        "options": [
+            { "vi": "Tốc độ tải lên bằng tốc độ tải xuống", "en": "Upload speed equals download speed" },
+            { "vi": "Tốc độ tải lên nhanh hơn tốc độ tải xuống", "en": "Upload speed is faster than download speed" },
+            { "vi": "Tốc độ tải xuống nhanh hơn tốc độ tải lên", "en": "Download speed is faster than upload speed" },
+            { "vi": "Chỉ cho phép tải xuống", "en": "It only allows downloading" }
+        ],
+        "correctAnswerIndex": 2,
+        "tip": {
+            "vi": "Asymmetric có nghĩa là 'bất đối xứng'. Nó được thiết kế cho người dùng gia đình, những người thường có nhu cầu tải xuống (xem phim, lướt web) nhiều hơn tải lên (gửi email).",
+            "en": "Asymmetric means 'not symmetrical.' It's designed for home users who typically have a greater need for downloading (watching movies, browsing) than uploading (sending emails)."
+        }
+    },
+    {
+        "id": 100,
+        "question": {
+            "vi": "Nhiệm vụ cuối cùng của tầng Physical ở bên nhận là gì?",
+            "en": "What is the final task of the Physical layer at the receiving end?"
+        },
+        "options": [
+            { "vi": "Chuyển tín hiệu thành bit", "en": "Convert signals into bits" },
+            { "vi": "Kiểm tra lỗi", "en": "Check for errors" },
+            { "vi": "Gửi ACK", "en": "Send an ACK" },
+            { "vi": "Định tuyến", "en": "Routing" }
+        ],
+        "correctAnswerIndex": 0,
+        "tip": {
+            "vi": "Tầng Physical ở bên gửi chuyển bit thành tín hiệu. Ngược lại, tầng Physical ở bên nhận phải chuyển tín hiệu nhận được trở lại thành dòng bit để các tầng trên có thể xử lý.",
+            "en": "The Physical layer on the sending side converts bits to signals. Conversely, the Physical layer on the receiving side must convert the received signals back into a stream of bits for the upper layers to process."
+        }
+    }
+];
 
-        chapterSelect.addEventListener('change', updateContent);
-    </script>
+// --- APP STATE ---
+let currentLanguage = 'vi';
+let shuffledQuestions = [];
+let currentQuestionIndex = 0;
+let userAnswers = [];
+let quizActive = false;
 
+// --- DOM ELEMENTS ---
+const theoryContentEl = document.getElementById('theory-content');
+const quizContentEl = document.getElementById('quiz-content');
+const quizStartScreenEl = document.getElementById('quiz-start-screen');
+const quizContainerEl = document.getElementById('quiz-container');
+const resultsContainerEl = document.getElementById('results-container');
+const questionTextEl = document.getElementById('question-text');
+const optionsContainerEl = document.getElementById('options-container');
+const feedbackContainerEl = document.getElementById('feedback-container');
+const nextBtnEl = document.getElementById('next-btn');
+const submitBtnEl = document.getElementById('submit-btn');
+const questionCounterEl = document.getElementById('question-counter');
+const progressBarFillEl = document.getElementById('progress-bar-fill');
+
+
+// --- FUNCTIONS ---
+
+// Utility to shuffle an array
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// Render content based on current language
+function renderContent() {
+    // Translate all static elements with data attributes
+    document.querySelectorAll('[data-vi]').forEach(el => {
+        el.innerHTML = el.dataset[currentLanguage];
+    });
+
+    // Render theory
+    theoryContentEl.innerHTML = theoryData[currentLanguage];
+
+    // If quiz is active, re-render the question
+    if (quizActive) {
+        if(shuffledQuestions.length > 0 && currentQuestionIndex < userAnswers.length) {
+             displayQuestion();
+        }
+    }
+    // If results are visible, re-render them
+    if (!resultsContainerEl.classList.contains('hidden')) {
+        displayResults();
+    }
+}
+
+function toggleLanguage() {
+    currentLanguage = (currentLanguage === 'vi') ? 'en' : 'vi';
+    renderContent();
+}
+
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+
+    document.getElementById(`${tabName}-content`).classList.add('active');
+    document.querySelector(`button[onclick="showTab('${tabName}')"]`).classList.add('active');
+}
+
+function startQuiz() {
+    shuffledQuestions = shuffleArray([...quizData]);
+    currentQuestionIndex = 0;
+    userAnswers = [];
+    quizActive = true;
+
+    quizStartScreenEl.classList.add('hidden');
+    resultsContainerEl.classList.add('hidden');
+    quizContainerEl.classList.remove('hidden');
+
+    displayQuestion();
+}
+
+function displayQuestion() {
+    feedbackContainerEl.classList.add('hidden');
+    nextBtnEl.classList.add('hidden');
+
+    const question = shuffledQuestions[currentQuestionIndex];
+    questionTextEl.innerText = question.question[currentLanguage];
+    
+    const questionCountText = {
+        vi: `Câu ${currentQuestionIndex + 1} / ${shuffledQuestions.length}`,
+        en: `Question ${currentQuestionIndex + 1} / ${shuffledQuestions.length}`
+    };
+    questionCounterEl.innerText = questionCountText[currentLanguage];
+
+    progressBarFillEl.style.width = `${((currentQuestionIndex) / shuffledQuestions.length) * 100}%`;
+    
+    optionsContainerEl.innerHTML = '';
+    question.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.classList.add('option-button');
+        button.innerText = `${String.fromCharCode(65 + index)}. ${option[currentLanguage]}`;
+        button.onclick = () => selectAnswer(index);
+        optionsContainerEl.appendChild(button);
+    });
+}
+
+function selectAnswer(selectedIndex) {
+    const question = shuffledQuestions[currentQuestionIndex];
+    const isCorrect = (selectedIndex === question.correctAnswerIndex);
+
+    // Store user's answer
+    userAnswers.push({
+        question: question,
+        userAnswerIndex: selectedIndex,
+        isCorrect: isCorrect
+    });
+    
+    // Disable all option buttons
+    const optionButtons = optionsContainerEl.querySelectorAll('.option-button');
+    optionButtons.forEach(btn => btn.disabled = true);
+    
+    // Provide visual feedback
+    const selectedButton = optionButtons[selectedIndex];
+    const correctButton = optionButtons[question.correctAnswerIndex];
+
+    if (isCorrect) {
+        selectedButton.classList.add('correct');
+        feedbackContainerEl.classList.add('hidden');
+    } else {
+        selectedButton.classList.add('incorrect');
+        correctButton.classList.add('correct-answer');
+        
+        const feedbackText = {
+            vi: `<strong>Mẹo ghi nhớ:</strong> ${question.tip.vi}`,
+            en: `<strong>Memory Tip:</strong> ${question.tip.en}`
+        }
+        feedbackContainerEl.innerHTML = feedbackText[currentLanguage];
+        feedbackContainerEl.classList.remove('hidden');
+    }
+    
+    // Show next button
+    if (currentQuestionIndex < shuffledQuestions.length - 1) {
+        nextBtnEl.classList.remove('hidden');
+    } else {
+        // This is the last question, change Next to a "Finish" button or just let them submit.
+         const lastQuestionText = { vi: '🏁 Hoàn Thành & Xem Kết Quả', en: '🏁 Finish & View Results' };
+         nextBtnEl.innerHTML = lastQuestionText[currentLanguage];
+         nextBtnEl.classList.remove('hidden');
+    }
+}
+
+
+function nextQuestion() {
+    currentQuestionIndex++;
+     if (currentQuestionIndex < shuffledQuestions.length) {
+        progressBarFillEl.style.width = `${((currentQuestionIndex) / shuffledQuestions.length) * 100}%`;
+        displayQuestion();
+    } else {
+        submitQuiz();
+    }
+}
+
+function submitQuiz() {
+    quizActive = false;
+    progressBarFillEl.style.width = `100%`;
+    displayResults();
+}
+
+function displayResults() {
+    quizContainerEl.classList.add('hidden');
+    resultsContainerEl.classList.remove('hidden');
+    
+    let correctCount = userAnswers.filter(a => a.isCorrect).length;
+    let totalAttempted = userAnswers.length;
+
+    const summaryHTML = `
+        <div id="results-summary">
+            <h2 data-vi="Kết Quả Bài Làm" data-en="Quiz Results">${currentLanguage === 'vi' ? 'Kết Quả Bài Làm' : 'Quiz Results'}</h2>
+            <p data-vi="Bạn đã trả lời đúng <strong>${correctCount} / ${totalAttempted}</strong> câu" data-en="You answered <strong>${correctCount} / ${totalAttempted}</strong> questions correctly">
+                ${currentLanguage === 'vi' ? `Bạn đã trả lời đúng <strong>${correctCount} / ${totalAttempted}</strong> câu` : `You answered <strong>${correctCount} / ${totalAttempted}</strong> questions correctly`}
+            </p>
+        </div>
+    `;
+
+    const detailsHTML = userAnswers.map((answer, index) => {
+        const q = answer.question;
+        const userAnswerText = q.options[answer.userAnswerIndex][currentLanguage];
+        const correctAnswerText = q.options[q.correctAnswerIndex][currentLanguage];
+        
+        const answerClass = answer.isCorrect ? 'correct' : 'incorrect';
+        const answerIcon = answer.isCorrect ? '✔️' : '❌';
+        
+        const answerDetails = answer.isCorrect 
+            ? `<p class="user-answer ${answerClass}">${answerIcon} ${currentLanguage === 'vi' ? 'Bạn đã chọn' : 'You chose'}: ${userAnswerText}</p>`
+            : `
+                <p class="user-answer ${answerClass}">${answerIcon} ${currentLanguage === 'vi' ? 'Bạn đã chọn' : 'You chose'}: ${userAnswerText}</p>
+                <p class="correct-answer-text">✔️ ${currentLanguage === 'vi' ? 'Đáp án đúng' : 'Correct answer'}: ${correctAnswerText}</p>
+                <div class="feedback-container">
+                    <strong>${currentLanguage === 'vi' ? 'Mẹo ghi nhớ' : 'Memory Tip'}:</strong> ${q.tip[currentLanguage]}
+                </div>
+            `;
+
+        return `
+            <div class="result-item">
+                <p class="result-item-question">${index + 1}. ${q.question[currentLanguage]}</p>
+                <div class="result-item-answer">
+                    ${answerDetails}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+     const restartButton = `
+        <div style="text-align:center; margin-top: 30px;">
+            <button class="quiz-start-button" onclick="restartQuiz()" data-vi="Làm Lại Bài Khác" data-en="Restart with New Questions">${currentLanguage === 'vi' ? 'Làm Lại Bài Khác' : 'Restart with New Questions'}</button>
+        </div>
+    `;
+
+    resultsContainerEl.innerHTML = summaryHTML + detailsHTML + restartButton;
+}
+
+function restartQuiz() {
+    resultsContainerEl.innerHTML = '';
+    resultsContainerEl.classList.add('hidden');
+    quizStartScreenEl.classList.remove('hidden');
+    quizContainerEl.classList.add('hidden');
+    progressBarFillEl.style.width = '0%';
+}
+
+// Initial load
+document.addEventListener('DOMContentLoaded', renderContent);
+
+</script>
 </body>
 </html>
