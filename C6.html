@@ -72,6 +72,16 @@
             transition: all 0.3s ease;
             font-weight: bold;
         }
+        
+        #submit-btn {
+             border-color: var(--warning-color);
+             color: var(--warning-color);
+        }
+        
+        #submit-btn:hover {
+            background-color: var(--warning-color);
+            color: var(--bg-color);
+        }
 
         .tab-button.active, .tab-button:hover, .control-button:hover, .quiz-nav-button:hover, .quiz-start-button:hover {
             background-color: var(--primary-color);
@@ -317,6 +327,11 @@
             color: var(--danger-color);
             font-weight: bold;
         }
+         .user-answer.unanswered {
+            color: var(--secondary-color);
+            font-style: italic;
+            font-weight: bold;
+        }
         .correct-answer-text {
             color: var(--success-color);
             font-weight: bold;
@@ -354,7 +369,7 @@
                     <label for="num-questions" data-vi="Chọn số câu hỏi:" data-en="Select number of questions:">Chọn số câu hỏi:</label>
                     <input type="number" id="num-questions" value="10" min="1" max="100">
                 </div>
-                <p data-vi="Các câu hỏi sẽ được xáo trộn ngẫu nhiên. Hãy bắt đầu khi bạn sẵn sàng!" data-en="Questions will be randomized. Start when you're ready!">Các câu hỏi sẽ được xáo trộn ngẫu nhiên. Hãy bắt đầu khi bạn sẵn sàng!</p>
+                <p data-vi="Các câu hỏi và đáp án sẽ được xáo trộn ngẫu nhiên. Hãy bắt đầu khi bạn sẵn sàng!" data-en="Questions and answers will be randomized. Start when you're ready!">Các câu hỏi và đáp án sẽ được xáo trộn ngẫu nhiên. Hãy bắt đầu khi bạn sẵn sàng!</p>
                 <button class="quiz-start-button" onclick="startQuiz()" data-vi="🚀 Bắt đầu làm bài" data-en="🚀 Start Quiz">🚀 Bắt đầu làm bài</button>
             </div>
 
@@ -369,12 +384,12 @@
                 <div class="options-container" id="options-container"></div>
                 <div class="feedback-container hidden" id="feedback-container"></div>
                 <div class="quiz-navigation">
-                    <button id="submit-btn" class="quiz-nav-button" onclick="submitQuiz()" data-vi="Nộp Bài" data-en="Submit">Nộp Bài</button>
+                     <button id="submit-btn" class="quiz-nav-button" onclick="submitQuiz()" data-vi="Nộp Bài" data-en="Submit">Nộp Bài</button>
                     <button id="next-btn" class="quiz-nav-button hidden" onclick="nextQuestion()" data-vi="Câu Tiếp Theo →" data-en="Next Question →">Câu Tiếp Theo →</button>
                 </div>
             </div>
              <div id="results-container" class="hidden">
-                </div>
+                 </div>
         </div>
     </div>
 
@@ -2385,7 +2400,7 @@ const quizData = [
 let currentLanguage = 'vi';
 let activeQuizQuestions = [];
 let currentQuestionIndex = 0;
-let userAnswers = [];
+let userAnswers = []; // Stores { questionId, userAnswerIndex, isCorrect }
 let quizActive = false;
 
 // --- DOM ELEMENTS ---
@@ -2397,6 +2412,7 @@ const questionTextEl = document.getElementById('question-text');
 const optionsContainerEl = document.getElementById('options-container');
 const feedbackContainerEl = document.getElementById('feedback-container');
 const nextBtnEl = document.getElementById('next-btn');
+const submitBtnEl = document.getElementById('submit-btn');
 const questionCounterEl = document.getElementById('question-counter');
 const progressBarFillEl = document.getElementById('progress-bar-fill');
 const numQuestionsInput = document.getElementById('num-questions');
@@ -2418,11 +2434,18 @@ function renderContent() {
     });
     theoryContentEl.innerHTML = theoryData[currentLanguage];
     if (quizActive) {
-        if(activeQuizQuestions.length > 0 && currentQuestionIndex < userAnswers.length) {
+        // If a quiz is active, re-render the current question to update language
+        if(activeQuizQuestions.length > 0 && currentQuestionIndex < activeQuizQuestions.length) {
              displayQuestion();
+             // Re-apply styles to already answered question
+             const answered = userAnswers.find(a => a.questionId === activeQuizQuestions[currentQuestionIndex].id);
+             if(answered) {
+                 showFeedback(answered.userAnswerIndex);
+             }
         }
     }
     if (!resultsContainerEl.classList.contains('hidden')) {
+        // If results are shown, re-render them in the new language
         displayResults();
     }
 }
@@ -2476,7 +2499,16 @@ function displayQuestion() {
     progressBarFillEl.style.width = `${((currentQuestionIndex) / activeQuizQuestions.length) * 100}%`;
     
     optionsContainerEl.innerHTML = '';
-    question.options.forEach((option, index) => {
+    
+    // ✅ Randomize answer options logic
+    if (!question.shuffledOptions) { // Shuffle only once per question
+        const correctOption = question.options[question.correctAnswerIndex];
+        const shuffled = shuffleArray(question.options);
+        question.shuffledOptions = shuffled;
+        question.newCorrectAnswerIndex = shuffled.indexOf(correctOption);
+    }
+    
+    question.shuffledOptions.forEach((option, index) => {
         const button = document.createElement('button');
         button.classList.add('option-button');
         button.innerHTML = `<strong>${String.fromCharCode(65 + index)}</strong>. ${option[currentLanguage]}`;
@@ -2486,20 +2518,32 @@ function displayQuestion() {
 }
 
 function selectAnswer(selectedIndex) {
+    // Prevent re-answering the same question
+    const alreadyAnswered = userAnswers.some(a => a.questionId === activeQuizQuestions[currentQuestionIndex].id);
+    if(alreadyAnswered) return;
+
     const question = activeQuizQuestions[currentQuestionIndex];
-    const isCorrect = (selectedIndex === question.correctAnswerIndex);
+    const isCorrect = (selectedIndex === question.newCorrectAnswerIndex);
 
     userAnswers.push({
-        question: question,
+        questionId: question.id,
         userAnswerIndex: selectedIndex,
+        shuffledOptionsOnAnswer: question.shuffledOptions, // Store the options as they were seen
         isCorrect: isCorrect
     });
+    
+    showFeedback(selectedIndex);
+}
+
+function showFeedback(selectedIndex) {
+    const question = activeQuizQuestions[currentQuestionIndex];
+    const isCorrect = (selectedIndex === question.newCorrectAnswerIndex);
     
     const optionButtons = optionsContainerEl.querySelectorAll('.option-button');
     optionButtons.forEach(btn => btn.disabled = true);
     
     const selectedButton = optionButtons[selectedIndex];
-    const correctButton = optionButtons[question.correctAnswerIndex];
+    const correctButton = optionButtons[question.newCorrectAnswerIndex];
 
     if (isCorrect) {
         selectedButton.classList.add('correct');
@@ -2508,6 +2552,7 @@ function selectAnswer(selectedIndex) {
         selectedButton.classList.add('incorrect');
         correctButton.classList.add('correct-answer');
         
+        // ✅ Show tip only when incorrect
         const feedbackText = {
             vi: `<strong>Mẹo ghi nhớ:</strong> ${question.tip.vi}`,
             en: `<strong>Memory Tip:</strong> ${question.tip.en}`
@@ -2516,16 +2561,17 @@ function selectAnswer(selectedIndex) {
         feedbackContainerEl.classList.remove('hidden');
     }
     
+    // Show next button
     if (currentQuestionIndex < activeQuizQuestions.length - 1) {
         nextBtnEl.classList.remove('hidden');
         const nextText = { vi: 'Câu Tiếp Theo →', en: 'Next Question →' };
         nextBtnEl.innerHTML = nextText[currentLanguage];
     } else {
-         const lastQuestionText = { vi: '🏁 Hoàn Thành & Xem Kết Quả', en: '🏁 Finish & View Results' };
-         nextBtnEl.innerHTML = lastQuestionText[currentLanguage];
-         nextBtnEl.classList.remove('hidden');
+        // Last question, no 'next'. User must click 'Submit'
+        nextBtnEl.classList.add('hidden');
     }
 }
+
 
 function nextQuestion() {
     currentQuestionIndex++;
@@ -2547,35 +2593,50 @@ function displayResults() {
     quizContainerEl.classList.add('hidden');
     resultsContainerEl.classList.remove('hidden');
     
-    let correctCount = userAnswers.filter(a => a.isCorrect).length;
-    let totalAttempted = userAnswers.length;
+    const correctCount = userAnswers.filter(a => a.isCorrect).length;
+    const totalQuestions = activeQuizQuestions.length;
 
     const summaryHTML = `
         <div id="results-summary">
             <h2 data-vi="Kết Quả Bài Làm" data-en="Quiz Results">${currentLanguage === 'vi' ? 'Kết Quả Bài Làm' : 'Quiz Results'}</h2>
-            <p data-vi="Bạn đã trả lời đúng <strong>${correctCount} / ${totalAttempted}</strong> câu" data-en="You answered <strong>${correctCount} / ${totalAttempted}</strong> questions correctly">
-                ${currentLanguage === 'vi' ? `Bạn đã trả lời đúng <strong>${correctCount} / ${totalAttempted}</strong> câu` : `You answered <strong>${correctCount} / ${totalAttempted}</strong> questions correctly`}
+            <p data-vi="Bạn đã trả lời đúng <strong>${correctCount} / ${totalQuestions}</strong> câu" data-en="You answered <strong>${correctCount} / ${totalQuestions}</strong> questions correctly">
+                ${currentLanguage === 'vi' ? `Bạn đã trả lời đúng <strong>${correctCount} / ${totalQuestions}</strong> câu` : `You answered <strong>${correctCount} / ${totalQuestions}</strong> questions correctly`}
             </p>
         </div>
     `;
 
-    const detailsHTML = userAnswers.map((answer, index) => {
-        const q = answer.question;
-        const userAnswerText = q.options[answer.userAnswerIndex][currentLanguage];
+    const detailsHTML = activeQuizQuestions.map((q, index) => {
+        const userAnswer = userAnswers.find(a => a.questionId === q.id);
         const correctAnswerText = q.options[q.correctAnswerIndex][currentLanguage];
+        let answerDetails;
         
-        const answerClass = answer.isCorrect ? 'correct' : 'incorrect';
-        const answerIcon = answer.isCorrect ? '✔️' : '❌';
-        
-        const answerDetails = answer.isCorrect 
-            ? `<p class="user-answer ${answerClass}">${answerIcon} ${currentLanguage === 'vi' ? 'Bạn đã chọn' : 'You chose'}: ${userAnswerText}</p>`
-            : `
-                <p class="user-answer ${answerClass}">${answerIcon} ${currentLanguage === 'vi' ? 'Bạn đã chọn' : 'You chose'}: ${userAnswerText}</p>
+        if (userAnswer) {
+            const userAnswerText = userAnswer.shuffledOptionsOnAnswer[userAnswer.userAnswerIndex][currentLanguage];
+            const answerClass = userAnswer.isCorrect ? 'correct' : 'incorrect';
+            const answerIcon = userAnswer.isCorrect ? '✔️' : '❌';
+            
+            if (userAnswer.isCorrect) {
+                 answerDetails = `<p class="user-answer ${answerClass}">${answerIcon} ${currentLanguage === 'vi' ? 'Bạn đã chọn' : 'You chose'}: ${userAnswerText}</p>`;
+            } else {
+                answerDetails = `
+                    <p class="user-answer ${answerClass}">${answerIcon} ${currentLanguage === 'vi' ? 'Bạn đã chọn' : 'You chose'}: ${userAnswerText}</p>
+                    <p class="correct-answer-text">✔️ ${currentLanguage === 'vi' ? 'Đáp án đúng' : 'Correct answer'}: ${correctAnswerText}</p>
+                    <div class="feedback-container">
+                        <strong>${currentLanguage === 'vi' ? 'Mẹo ghi nhớ' : 'Memory Tip'}:</strong> ${q.tip[currentLanguage]}
+                    </div>
+                `;
+            }
+        } else {
+            // ✅ Logic for unanswered questions
+            const unansweredText = { vi: "[Chưa trả lời]", en: "[Unanswered]" };
+            answerDetails = `
+                <p class="user-answer unanswered">❌ ${unansweredText[currentLanguage]}</p>
                 <p class="correct-answer-text">✔️ ${currentLanguage === 'vi' ? 'Đáp án đúng' : 'Correct answer'}: ${correctAnswerText}</p>
                 <div class="feedback-container">
                     <strong>${currentLanguage === 'vi' ? 'Mẹo ghi nhớ' : 'Memory Tip'}:</strong> ${q.tip[currentLanguage]}
                 </div>
             `;
+        }
 
         return `
             <div class="result-item">
@@ -2602,6 +2663,11 @@ function restartQuiz() {
     quizStartScreenEl.classList.remove('hidden');
     quizContainerEl.classList.add('hidden');
     progressBarFillEl.style.width = '0%';
+    // Clear shuffle cache for next round
+    activeQuizQuestions.forEach(q => {
+        delete q.shuffledOptions;
+        delete q.newCorrectAnswerIndex;
+    });
 }
 
 document.addEventListener('DOMContentLoaded', renderContent);
